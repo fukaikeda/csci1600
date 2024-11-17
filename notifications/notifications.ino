@@ -3,14 +3,14 @@
 #include <UrlEncode.h>
 #include "Client.h"
 
-const char* ssid = "Brown-Guest";
-const char* password = "";
+const char* ssid = "iPhone";
+const char* password = "testPass";
 int status = WL_IDLE_STATUS;
 
 // char serverAddress[] = "192.168.86.1";  // server address
 // IPAddress server(74,125,115,105);
 char server[] = "api.callmebot.com";
-int port = 80;
+int port = 443;
 WiFiClient wifi;
 
 // +international_country_code + phone number
@@ -18,34 +18,83 @@ WiFiClient wifi;
 String phoneNumber = "+14018372684";
 String apiKey = "4342046";
 
-void sendMessage(String message){
+void redirectCallback(String response) {
+    int urlIndex = response.indexOf("url=");
+    if (urlIndex == -1) {
+        Serial.println("Redirect URL not found.");
+        return;
+    }
 
-  // Data to send with HTTP POST
-  String url = "https://api.callmebot.com/whatsapp.php?phone=" + phoneNumber + "&apikey=" + apiKey + "&text=" + urlEncode(message); 
-  Serial.println(url);
+    // Extract the URL
+    int start = urlIndex + 4; // "url="
+    int end = response.indexOf("'", start);
+    if (end == -1) {
+        Serial.println("Invalid URL format");
+        return;
+    }
 
-  HttpClient http = HttpClient(wifi, server, port);
+    String redirectUrl = response.substring(start, end);
+    Serial.println("Redirect URL: " + redirectUrl);
 
-  http.beginRequest();
+    int pathIndex = redirectUrl.indexOf("/", 8); // http:// or https://
+    String host = redirectUrl.substring(7, pathIndex);
+    String path = redirectUrl.substring(pathIndex);
 
-  // Specify content-type header
-  http.sendHeader("Content-Type", "application/x-www-form-urlencoded");
-  
-  // Send HTTP POST request
-  int res = http.post(url);
-  if (res == 0){
-    Serial.println("Message sent successfully");
-    Serial.println("Response: ");
-    Serial.println(http.responseBody());
-  }
-  else{
-    Serial.println("Error sending the message");
-    Serial.print("HTTP response code: ");
-    Serial.println(http.responseStatusCode());
-  }
+    Serial.println("Host: " + host);
+    Serial.println("Path: " + path);
 
-  // Free resources
-  http.endRequest();
+    if (!wifi.connect(host.c_str(), 80)) {
+        Serial.println("Failed to connect to redirect server.");
+        return;
+    }
+
+    // Send GET request
+    wifi.print(String("GET ") + path + " HTTPS/1.1\r\n" +
+                         "Host: " + host + "\r\n" +
+                         "Connection: close\r\n" +
+                         "\r\n");
+
+    String redirectResponse = "";
+    while (wifi.connected()) {
+        while (wifi.available()) {
+            char c = wifi.read();
+            redirectResponse += c;
+        }
+    }
+
+    Serial.println("Redirect Response:");
+    Serial.println(redirectResponse);
+}
+
+void sendMessage(String message) {
+    if (!wifi.connect(server, port)) {
+        Serial.println("Connection to server failed");
+        return;
+    }
+
+    String url = "/whatsapp.php?phone=" + phoneNumber + "&apikey=" + apiKey + "&text=" + urlEncode(message);
+    Serial.println("Sending POST request to: " + String(server));
+    wifi.print(String("POST ") + url + " HTTPS/1.1\r\n" +
+               "Host: api.callmebot.com\r\n" +
+               "User-Agent: ESP32\r\n" +
+               "Connection: close\r\n" +
+               "\r\n");
+
+    while (wifi.connected()) {
+        String line = wifi.readStringUntil('\n');
+        if (line == "\r") break;
+        Serial.println(line);
+    }
+
+    String response = "";
+    while (wifi.available()) {
+        String line = wifi.readStringUntil('\n');
+        response += line;
+    }
+    Serial.println("Response:");
+    Serial.println(response);
+
+    redirectCallback(response);
 }
 
 void setup() {
@@ -69,7 +118,8 @@ void setup() {
   while (status != WL_CONNECTED) {
     Serial.print(".");
     // Connect to WPA/WPA2 network:
-    status = WiFi.begin(ssid);
+    // status = WiFi.begin(ssid);
+    status = WiFi.begin(ssid, password);
 
     // wait 1 seconds for connection:
     delay(1000);
@@ -81,28 +131,40 @@ void setup() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  // Send Message to WhatsAPP
-  // sendMessage("Hello from ESP32!");
-
-  if (wifi.connect(server, port)) {
-      Serial.println("connected");
-      // Make a HTTP request:
-      String message = "Hello from ESP32!";
-      String url = "/whatsapp.php?phone=" + phoneNumber + "&apikey=" + apiKey + "&text=" + urlEncode(message); 
-      Serial.println(url);
-      wifi.print("POST " + url + " HTTP/1.1\r\n");
-      wifi.print("Host: " + String(server) + "\r\n");
-      wifi.print("Connection: close\r\n");
-      wifi.print("Content-Type: application/x-www-form-urlencoded\r\n");
-      wifi.println();
-
-      while (wifi.connected()) {            // loop while the client's connected
-        if (wifi.available()) {             // if there's bytes to read from the client,
-          char c = wifi.read();             // read a byte, then
-          Serial.print(c);                    // print it out to the serial monitor
-        }
-      }
-    }
+  // Check if a captive portal exists, for Brown-Guest
+  if (isCaptivePortal()) {
+      Serial.println("Captive portal detected!");
+  } else {
+      Serial.println("No captive portal detected.");
+  }
 }
 
-void loop() {}
+bool isCaptivePortal() {
+    if (!wifi.connect("connectivitycheck.gstatic.com", 80)) {
+        Serial.println("Failed to connect to test server.");
+        return false;
+    }
+
+    wifi.print(String("GET /generate_204 HTTP/1.1\r\n") +
+               "Host: connectivitycheck.gstatic.com\r\n" +
+               "Connection: close\r\n\r\n");
+
+    String response = "";
+    while (wifi.connected()) {
+        while (wifi.available()) {
+            char c = wifi.read();
+            response += c;
+        }
+    }
+
+    Serial.println("Captive Portal Check Response:");
+    Serial.println(response);
+
+    return response.indexOf("HTTP/1.1 204 No Content") == -1;
+}
+
+void loop() {
+  if (status != WL_CONNECTED) return;
+  sendMessage("Sent from arudino, it worked for real this time");
+  delay(100000);
+}
