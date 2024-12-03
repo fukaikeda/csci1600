@@ -1,5 +1,6 @@
 #include <RTClib.h>
 #include <Stepper.h>
+#include <Wire.h>
 
 // RTC guide: https://arduinogetstarted.com/tutorials/arduino-rtc
 
@@ -29,23 +30,14 @@ int inputHour = 0, inputMinute = 0; // Input time
 void setup() {
     Serial.begin(9600);
 
-
     // Initialize the RTC
     if (!rtc.begin()) {
         Serial.println("Couldn't find RTC");
         while (1); // Halt if RTC is not found
     }
     
-    // automatically sets the RTC to the date & time on PC this sketch was compiled
+    // Automatically sets the RTC to the date & time on PC this sketch was compiled
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-
-    // manually sets the RTC with an explicit date & time, for example to set
-    // January 21, 2021 at 3am you would call:
-    // rtc.adjust(DateTime(2021, 1, 21, 3, 0, 0));
-    
-    // test clock function printing
-    DateTime now = rtc.now(); 
-    Serial.println("Current time = " +  now.hour() + now.minute());
 
     // Initialize steppers
     hourStepper.setSpeed(10);
@@ -53,8 +45,28 @@ void setup() {
 }
 
 void loop() {
-    // Check for serial input
-    if (Serial.available() >= 4) {
+    // Print mode and current time to Serial
+    if (displayRealTime) {
+        DateTime now = rtc.now(); // Get real-time clock value
+        Serial.print("Mode: Real-time, Time: ");
+        Serial.print(now.hour(), DEC);
+        Serial.print(":");
+        if (now.minute() < 10) {
+            Serial.print("0"); // Leading zero for minutes < 10
+        }
+        Serial.println(now.minute(), DEC);
+    } else {
+        Serial.print("Mode: Input mode, Time: ");
+        Serial.print(inputHour, DEC);
+        Serial.print(":");
+        if (inputMinute < 10) {
+            Serial.print("0"); // Leading zero for minutes < 10
+        }
+        Serial.println(inputMinute, DEC);
+    }
+
+    // Only accept serial input when in real-time mode (displayRealTime == true)
+    if (displayRealTime && Serial.available() >= 4) {
         // Read military time input
         String timeInput = Serial.readStringUntil('\n');
         inputHour = timeInput.substring(0, 2).toInt();   // Get hour
@@ -93,12 +105,12 @@ void updateClock(int hour, int minute) {
     currentHourPos = targetHourPos;
 
     // Move minute hand
+    // Calculate the raw difference
     int minuteStepsToMove = targetMinutePos - currentMinutePos;
-    minuteStepper.step(minuteStepsToMove);
-    currentMinutePos = targetMinutePos;
 
-    Serial.print("Clock updated to: ");
-    Serial.print(hour);
-    Serial.print(":");
-    Serial.println(minute);
+    // Move the stepper motor in the opposite direction
+    minuteStepper.step(-minuteStepsToMove);
+
+    // Update the current position
+    currentMinutePos = targetMinutePos;
 }
