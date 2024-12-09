@@ -5,18 +5,16 @@ volatile bool actionLEDState = LOW;
  */
 void updateActionButtonInputs() {
   actionLEDState = LOW; // Reset the action LED state
-  // triggeredActionButton = -1;
   for (int i = 0; i < 2; i++) {
     if (digitalRead(actionButtons[i]) == HIGH) { // Button is pressed (active low)
       actionLEDState = HIGH; // Turn on the action LED
+      turnOnLED(actionLED);
       triggeredActionButton = actionButtons[i];
       break; // Exit loop once any button is pressed
     }
   }
 
-  digitalWrite(actionLED, actionLEDState);
-
-  if (actionLEDState == HIGH && triggeredActionButton != -1) {
+  if (actionLEDState == HIGH && triggeredActionButton != Action::NoAction) {
     Serial.print("Action LED triggered by button: ");
     Serial.println(triggeredActionButton);
 
@@ -41,10 +39,8 @@ void turnOffLED(int ledPin) {
  * Reset the current selection
  */
 void resetSelection() {
-  lastUserButtonValues[selectedUser] = LOW;
-  lastActionButtonValues[selectedAction] = LOW;
-  selectedUser = user.none;
-  selectedAction = action.none;
+  turnOffLED(userLED);
+  turnOffLED(actionLED);
+  triggeredUserButton = User::None;
+  triggeredActionButton = Action::NoAction;
 }
-
-�%
