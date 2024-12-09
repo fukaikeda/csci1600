@@ -7,10 +7,17 @@ typedef enum {
 } user;
 
 typedef enum {
-  returnTime = 0;
-  message = 1;
-  none = 2
+  returnTime = 0,
+  message = 1,
+  noAction = 2
 } action;
+
+typedef enum {
+  sDisplayRealTime = 0,
+  sWaitAfterUserBut = 1,
+  sWaitAfterTimeBut = 2,
+  sWaitAfterMessage = 3
+} state;
 
 int lastUserButtonValues[4] = {LOW, LOW, LOW, LOW};
 int lastActionButtonValues[2] = {LOW, LOW};
