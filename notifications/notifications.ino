@@ -32,13 +32,13 @@ void setupWiFi(const char* ssid, const char* password) {
 *   Sends a message input to the specified phone number using apiKey.
 *   WiFi must be intialized, sends to non https endpoint
 */
-void sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
+int sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
     const char* server = "api.callmebot.com";
     int port = 443;
 
     if (!wifi.connect(server, port)) {
         Serial.println("Connection to server failed");
-        return;
+        return -1;
     }
 
     String url = String("/whatsapp.php?phone=") + phoneNumber + "&apikey=" + apiKey + "&text=" + urlEncode(message);
@@ -59,6 +59,7 @@ void sendNotification(const char* phoneNumber, const char* apiKey, const char* m
 
     Serial.println("Response:");
     Serial.println(response);
+    return 0;
 }
 
 /* 
@@ -66,12 +67,16 @@ void sendNotification(const char* phoneNumber, const char* apiKey, const char* m
 *   personal to the name passed in and calls sendNotification to
 *   send the message via WhatsApp api
 */
-void sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name) {
+int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name) {
     int numMessages = sizeof(messages) / sizeof(messages[0]);
     int randomIndex = random(0, numMessages);
 
     char formattedMessage[256];
     snprintf(formattedMessage, sizeof(formattedMessage), messages[randomIndex], name);
 
-    sendNotification(phoneNumber, apiKey, formattedMessage);
+    if (sendNotification(phoneNumber, apiKey, formattedMessage) < 0) {
+      Serial.println("Failed to send enocurage message notification");
+      return -1;
+    }
+    return 0;
 }

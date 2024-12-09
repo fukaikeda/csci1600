@@ -8,7 +8,7 @@
 #include <UrlEncode.h>
 
 void setupWiFi(const char* ssid, const char* password);
-void sendNotification(const char* phoneNumber, const char* apiKey, const char* message);
-void sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name);
+int sendNotification(const char* phoneNumber, const char* apiKey, const char* message);
+int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name);
 
 #endif // NOTIFICATIONS_H
