@@ -19,23 +19,21 @@ typedef enum {
   sWaitAfterMessage = 3
 } state;
 
-struct fsmState {
-  int lastActionButtonValues[2] = {LOW, LOW};
-  user selectedUser;
-  action selectedAction;
-  uint savedClock;
+// store everyone's return time 
+std::map<String, String> homeTimes = {
+    {"Mia", ""},
+    {"Fuka", ""},
+    {"Jason", ""},
+    {"Kana", "test"}
 };
 
-void initFSM() {
+const int userButtons[4] = {A1, A2, A3, A5}; // User buttons Do not change!!
+const int actionButtons[2] = {2, 3};       // Action buttons
+const int userLED = 12;                      // LED for user buttons
+const int actionLED = 13;                    // LED for action buttons
 
-}
+// Include additional variables to store the triggered button
+volatile int triggeredUserButton = -1; // Variable to track the user button that triggered ISR
+static int triggeredActionButton = -1; // Variable to track the action button that triggered ISR
 
-// TODO: Assign pins
-// 4 User buttons
-const int userButtons[4] = {_, _, _, _}; 
-// 2 Action buttons
-const int actionButtons[2] = {_, _};
-// 4 User Status LEDs
-const int userLEDs[4] = {_, _, _, _}; 
-// 2 Action Status LEDs
-const int actionLEDs[2] = {_, _};
+void initButtons();

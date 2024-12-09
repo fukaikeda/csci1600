@@ -3,27 +3,24 @@
 void setup() {
   Serial.begin(9600);
   while (!Serial); // Wait for Serial to initialize
-  // set up pin modes
-  pinMode(userButtons[0], INPUT);
-  pinMode(userButtons[1], INPUT);
-  pinMode(userButtons[2], INPUT);
-  pinMode(userButtons[3], INPUT);
-  pinMode(returnTimeButton, INPUT);
-  pinMode(messageButton, INPUT);
-  pinMode(userLEDs[0], OUTPUT);
-  pinMode(userLEDs[1], OUTPUT);
-  pinMode(userLEDs[2], OUTPUT);
-  pinMode(userLEDs[3], OUTPUT);
-  pinMode(returnTimeLED, OUTPUT);
-  pinMode(messageLED, OUTPUT);
+  
+  // initialize each component
+  initButtons();
 
-  savedClock = millis();
+  // savedClock = millis();
 }
 
 void loop() {
-  // static state CURRENT_STATE = sDisplayRealTime;
-  updateInputs();
-  // CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
+  static state CURRENT_STATE = sDisplayRealTime;
+
+  if (triggeredUserButton != -1) {
+    Serial.print("User button triggered ISR: ");
+    Serial.println(triggeredUserButton);
+    // triggeredUserButton = -1; // Reset after processing
+  }
+
+  updateActionButtonInputs(); // polling button inputs
+  CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
   delay(10);
 }
 
