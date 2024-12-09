@@ -19,10 +19,16 @@ typedef enum {
   sWaitAfterMessage = 3
 } state;
 
-int lastUserButtonValues[4] = {LOW, LOW, LOW, LOW};
-int lastActionButtonValues[2] = {LOW, LOW};
-user selectedUser;
-action selectedAction;
+struct fsmState {
+  int lastActionButtonValues[2] = {LOW, LOW};
+  user selectedUser;
+  action selectedAction;
+  uint savedClock;
+};
+
+void initFSM() {
+
+}
 
 // TODO: Assign pins
 // 4 User buttons

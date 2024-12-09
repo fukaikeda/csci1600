@@ -6,13 +6,14 @@
 #include <Arduino.h>
 
 struct GCal {
-    const char* ssid;
-    const char* password;
+    // const char* ssid;
+    // const char* password;
     const char* urlPath;
     WiFiSSLClient sslClient;
     std::map<String, String> homeTimes;
 
-    void connectWiFi();
+    // void connectWiFi();
+    void initGCal();
     void fetchData();
     void printHomeTimes();
     void followRedirect(const String& redirectURL);

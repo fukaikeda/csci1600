@@ -1,5 +1,15 @@
 #include "gcal.h"
 
+void GCal::initGCal() {
+  urlPath = "https://script.google.com/macros/s/AKfycbzlxd6S-ICKerltaRHMZuLLY5uu0sigxrSwYrpZRVTKGtt7K9BRi6qSf9NOxINSZJr2yw/exec";
+  homeTimes = {
+    {"Mia", ""},
+    {"Fuka", ""},
+    {"Jason", ""},
+    {"Kana", ""}
+  };
+}
+
 void GCal::connectWiFi() {
     Serial.print("Connecting to Wi-Fi: ");
     Serial.println(ssid);

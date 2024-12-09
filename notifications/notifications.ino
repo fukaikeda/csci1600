@@ -1,19 +1,25 @@
 #include "notifications.h"
 
-WiFiClient wifi;
-const char* messages[] = {
-    "Keep going, %s! You're doing great!",
-    "%s, remember to take it one step at a time!",
-    "You're amazing, %s! Keep it up!",
-    "Hey %s, you can do this!",
-    "Don't give up, %s! The best is yet to come!"
-};
-
+/*
+* Initailize a notification struct
+*/
+void Notifications::initNotifications() {
+  Notifications temp;
+  temp.ssid = "iPhone";
+  temp.password = "testPass";
+  temp.phoneNumber = "+14018372684";
+  temp.apiKey = "4342046";
+  temp.messages[0] = "Keep going, %s! You're doing great!";
+  temp.messages[1] = "%s, remember to take it one step at a time!";
+  temp.messages[2] = "You're amazing, %s! Keep it up!";
+  temp.messages[3] = "Hey %s, you can do this!";
+  temp.messages[4] = "Don't give up, %s! The best is yet to come!";
+}
 /* 
 *   Called before sending notifications, connects to wifi for
 *   notifications to work. Takes in wifi ssid and password as strings.
 */
-void setupWiFi(const char* ssid, const char* password) {
+void Notifications::setupWiFi() {
     Serial.print("Attempting to connect to WPA SSID: ");
     Serial.println(ssid);
 
@@ -32,7 +38,7 @@ void setupWiFi(const char* ssid, const char* password) {
 *   Sends a message input to the specified phone number using apiKey.
 *   WiFi must be intialized, sends to non https endpoint
 */
-int sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
+int Notifications::sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
     const char* server = "api.callmebot.com";
     int port = 80;
 
@@ -67,7 +73,7 @@ int sendNotification(const char* phoneNumber, const char* apiKey, const char* me
 *   personal to the name passed in and calls sendNotification to
 *   send the message via WhatsApp api
 */
-int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name) {
+int Notifications::sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name) {
   if (name == nullptr or name == "") return -1;
     int numMessages = sizeof(messages) / sizeof(messages[0]);
     int randomIndex = random(0, numMessages);

@@ -7,8 +7,17 @@
 #include <ArduinoHttpClient.h>
 #include <UrlEncode.h>
 
-void setupWiFi(const char* ssid, const char* password);
-int sendNotification(const char* phoneNumber, const char* apiKey, const char* message);
-int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name);
+struct Notifications {
+  const char* ssid;
+  const char* password;
+  const char* phoneNumber;
+  const char* apiKey;
+  WiFiClient wifi;
+  const char* messages[5];
+  void initNotifications();
+  void setupWiFi();
+  int sendNotification(const char* phoneNumber, const char* apiKey, const char* message);
+  int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name);
+};
 
 #endif // NOTIFICATIONS_H
