@@ -13,7 +13,9 @@ void setup() {
 
     // Test: sendNotification with wifi not set up
 
-
+    if (sendNotification(phoneNumber, apiKey, "Should fail") != -1) {
+      Serial.println("Error: Should have failed sending notification");
+    }
 
     setupWiFi(ssid, password);
 
@@ -69,7 +71,7 @@ void setup() {
     // Test: Multiple Consecutive Messages
     Serial.println("Test: Sending multiple consecutive messages");
     for (int i = 0; i < 5; i++) {
-        if (sendNotification(phoneNumber, apiKey, String("Consecutive message test #") + (i + 1)) == -1) {
+        if (sendNotification(phoneNumber, apiKey, "Consecutive message test #" + (i + 1)) == -1) {
             Serial.println("Error: Failed to send consecutive message #" + String(i + 1));
         }
         delay(1000);

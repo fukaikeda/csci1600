@@ -5,7 +5,11 @@ struct mockNotifications {
 };
 
 struct mockCalendar {
-
+    void connectWiFi() { Serial.println("Connected to WiFi"); }
+    void fetchData() { Serial.println("Fetched Data"); };
+    // void printHomeTimes();
+    // void followRedirect(const String& redirectURL);
+    String getHomeTime(String name) { return "Jason"; };
 };
 
 struct mockClock {

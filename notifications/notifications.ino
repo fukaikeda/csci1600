@@ -34,7 +34,7 @@ void setupWiFi(const char* ssid, const char* password) {
 */
 int sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
     const char* server = "api.callmebot.com";
-    int port = 443;
+    int port = 80;
 
     if (!wifi.connect(server, port)) {
         Serial.println("Connection to server failed");
@@ -68,6 +68,7 @@ int sendNotification(const char* phoneNumber, const char* apiKey, const char* me
 *   send the message via WhatsApp api
 */
 int sendEncouragingMessage(const char* phoneNumber, const char* apiKey, const char* name) {
+  if (name == nullptr or name == "") return -1;
     int numMessages = sizeof(messages) / sizeof(messages[0]);
     int randomIndex = random(0, numMessages);
 
