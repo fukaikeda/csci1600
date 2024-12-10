@@ -74,7 +74,11 @@ void ClockController::handleRealTimeMode() {
     }
 }
 
-// Method for handling time input 
+/*
+* Method for handling time input 
+* int time is a four digit number (example: 0820, 2356) 
+*/ 
+
 
 void ClockController::handleInputMode(int time) {
 
