@@ -1,5 +1,3 @@
-volatile bool actionLEDState = LOW;
-
 /*
  * Read in button inputs and light on corresponding LEDs
  */
@@ -43,6 +41,8 @@ void resetSelection() {
   turnOffLED(actionLED);
   triggeredUserButton = User::None;
   triggeredActionButton = Action::NoAction;
+  userLEDState = LOW;
+  actionLEDState = LOW;
 }
 /*
  * Blink the action LED to indicate the action cannot be taken due to some errors

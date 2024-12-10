@@ -26,7 +26,7 @@ void setup() {
 
 void loop() {
   static State CURRENT_STATE = sDisplayRealTime;
-  updateActionButtonInputs(); // polling button inputs
+  // updateActionButtonInputs(); // polling button inputs
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
   Serial.println(CURRENT_STATE);
   delay(10);
@@ -73,9 +73,10 @@ State updateFSM(State curState, long mils) {
     break;
   case sWaitAfterTimeBut: // state 2
     Serial.println("State 2");
-    if (mils - savedClock > 5000) {  // Transition 2-0
+    if (mils - savedClock > 20000) {  // Transition 2-0
       clockController.handleRealTimeMode();     
       resetSelection();
+      nextState = sDisplayRealTime;
     }
     break;
   case sWaitAfterMessage: // state 3 
@@ -87,6 +88,7 @@ State updateFSM(State curState, long mils) {
       clockController.handleRealTimeMode();  
       resetSelection();
       message_finished = false;
+      nextState = sDisplayRealTime;
     }
     break;
   }
