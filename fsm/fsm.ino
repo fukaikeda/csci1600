@@ -1,6 +1,8 @@
 #include "fsm.h"
-#include "notifications/notifications.h"
-#include "gcal/gcal.h"
+// #include "notifications/notifications.h"
+#include "notifications.h"
+// #include "gcal/gcal.h"
+#include "gcal.h"
 
 Notifications notifManager;
 GCal gcalManager;
