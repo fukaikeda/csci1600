@@ -28,7 +28,7 @@ void loop() {
   static State CURRENT_STATE = sDisplayRealTime;
   // updateActionButtonInputs(); // polling button inputs
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
-  Serial.println(CURRENT_STATE);
+  // Serial.println(CURRENT_STATE);
   delay(10);
 }
 
@@ -53,6 +53,9 @@ State updateFSM(State curState, long mils) {
         // fetch the return time
         gcalManager.fetchData();
         String time = gcalManager.getHomeTime(names[triggeredUserButton]);
+        Serial.print("Return time for ");
+        Serial.println(names[triggeredUserButton]);
+        Serial.println(time);
         clockController.handleInputMode(time);           
         turnOnLED(actionLED);
         ////////// some way to ignore additional user/message button inputs
@@ -84,6 +87,7 @@ State updateFSM(State curState, long mils) {
     if (mils - savedClock > 5000) {
       if (!message_finished) {  // Transition 3-0(b)
         indicateError();
+        Serial.println("error occured");
       }
       clockController.handleRealTimeMode();  
       resetSelection();
