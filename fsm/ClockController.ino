@@ -1,9 +1,13 @@
 #include "ClockController.h"
 #include <Arduino.h>
+#include <Stepper.h>
 
-ClockController::ClockController(int hourPin, int minutePin)
+#define STEPS_PER_REVOLUTION 2000
+
+ClockController::ClockController()
     : currentHourAngle(0), currentMinuteAngle(0), switchTime(0), displayRealTime(true), inputHour(0), inputMinute(0) {
-    hourServo.attach(hourPin);
+    hourStepper(STEPS_PER_REVOLUTION, hourPins[4], hourPins[6], hourPins[5], hourPins[7]),
+    minuteStepper(STEPS_PER_REVOLUTION, hourPins[8], hourPins[10], hourPins[9], hourPins[11]),
     minuteServo.attach(minutePin);
 }
 
@@ -74,11 +78,7 @@ void ClockController::handleRealTimeMode() {
     }
 }
 
-/*
-* Method for handling time input 
-* int time is a four digit number (example: 0820, 2356) 
-*/ 
-
+// Method for handling time input 
 
 void ClockController::handleInputMode(int time) {
 
@@ -130,26 +130,16 @@ void ClockController::updateClock(int hour, int minute) {
     // Serial output for debugging 
     Serial.print("Updating clock to ");
     Serial.print(hour); Serial.print(":");
-    if (minute < 10) Serial.print("0");
+    if (minute < 10) Serial.print("0"); // single digit buffer
     Serial.println(minute);
 
-    // Smooth transition for hour servo
-    for (int pos = currentHourAngle; pos != targetHourAngle; pos += (targetHourAngle > currentHourAngle) ? 1 : -1) {
-        hourServo.write(pos);
-        delay(10); // Delay added for smooth transition
-    }
+    // hour stepper
+    hourStepper.step(targetHourSteps - currentHourSteps);
+    currentHourSteps = targetHourSteps;
 
-    // Stores current hour 
-    currentHourAngle = targetHourAngle;
-
-    // Smooth transition for minute servo
-    for (int pos = currentMinuteAngle; pos != targetMinuteAngle; pos += (targetMinuteAngle > currentMinuteAngle) ? 1 : -1) {
-        minuteServo.write(pos);
-        delay(5); // Delay added for smooth transition
-    }
-
-    // Stores current minute 
-    currentMinuteAngle = targetMinuteAngle;
+    // minute stepper
+    minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
+    currentMinuteSteps = targetMinuteSteps;
 
     Serial.println("Clock update complete.");
 }
@@ -157,11 +147,11 @@ void ClockController::updateClock(int hour, int minute) {
 // Helper function for calculating hour angles
 
 int ClockController::calculateHourAngle(int hour) const {
-    return map(hour % 12, 0, 12, 0, 180);
+    return map(hour % 12, 0, 12, 0, STEPS_PER_REVOLUTION);
 }
 
 // Helper function for calculating minute angles
 
 int ClockController::calculateMinuteAngle(int minute) const {
-    return map(minute, 0, 60, 0, 180);
+    return map(minute, 0, 60, 0, STEPS_PER_REVOLUTION);
 }
