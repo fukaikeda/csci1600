@@ -5,6 +5,9 @@
 Notifications notifManager;
 GCal gcalManager;
 
+static int savedClock;
+static bool message_finished = false;
+
 void setup() {
   Serial.begin(9600);
   while (!Serial); // Wait for Serial to initialize
@@ -20,6 +23,7 @@ void setup() {
 void loop() {
   static State CURRENT_STATE = sDisplayRealTime;
   updateActionButtonInputs(); // polling button inputs
+  gcalManager.fetchData();
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
   delay(10);
 }
@@ -28,14 +32,12 @@ State updateFSM(State curState, long mils) {
   Serial.print("User button selected: ");
   Serial.println(triggeredUserButton);
 
-  static bool pwm_finished_fsm = false;
-  static bool message_finished_fsm = false;
   State nextState;
   switch(curState) {
   case sDisplayRealTime: // state 0
     resetSelection();
     if (triggeredUserButton != User::None) {
-      turnOnLED(userLEDs[triggeredUserButton]);
+      turnOnLED(userLED);
       nextState = sWaitAfterUserBut;
       savedClock = mils;
     }
@@ -44,44 +46,29 @@ State updateFSM(State curState, long mils) {
     if (triggeredActionButton != Action::NoAction && mils - savedClock > 10000) {
       // go back to state 0
       nextState = sDisplayRealTime;
-      turnOffLED(userLEDs[triggeredUserButtonU]);
+      turnOffLED(userLED);
     } else if (triggeredActionButton == Action::ReturnTime) {
+      String time = gcalManager.getHomeTime(names[triggeredUserButton]);
       //displayReturnTime();            
-      turnOnLED(actionLEDs[triggeredActionButton]);
+      turnOnLED(actionLED);
       ////////// some way to ignore additional user/message button inputs
       nextState = sWaitAfterTimeBut;
       savedClock = mils;
     } else if (triggeredActionButton == Action::Message) {
       notifManager.sendEncouragingMessage(names[triggeredUserButton]);
-      turnOnLED(actionLEDs[triggeredActionButton]);
+      turnOnLED(actionLED);
       ////////// some way to ignore additional user/returnTime button inputs
       nextState = sWaitAfterMessage; 
       savedClock = mils;
     }
     break;
   case sWaitAfterTimeBut: // state 2
-    if (pwm_finished) {
-      pwm_finished_fsm = true;
-      savedClock = mils;
-      pwm_finished = false;
-    }
-    
-    if (pwm_finished_fsm && mils - savedClock > 10000) {
-      turnOffLED(userLEDs[triggeredUserButton]);
-      turnOffLED(actionLEDs[triggeredActionButton]);
+    if (mils - savedClock > 10000) {
       resetSelection();
-      pwm_finished_fsm = false;
     }
     break;
-  case sWaitAfterMessage: // state 3
-    if (message_finished) {
-      message_finished_fsm = true;
-      savedClock = mils;
-      message_finished = false;
-    }    
-    if(message_finished_fsm && mils - savedClock > 3000) {
-      turnOffLED(userLEDs[triggeredUserButton]);
-      turnOffLED(actionLEDs[triggeredActionButton]);
+  case sWaitAfterMessage: // state 3 
+    if(mils - savedClock > 3000) {
       resetSelection();
       message_finished = false;
     }

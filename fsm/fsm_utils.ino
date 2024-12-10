@@ -9,7 +9,7 @@ void updateActionButtonInputs() {
     if (digitalRead(actionButtons[i]) == HIGH) { // Button is pressed (active low)
       actionLEDState = HIGH; // Turn on the action LED
       turnOnLED(actionLED);
-      triggeredActionButton = actionButtons[i];
+      triggeredActionButton = (Action) i;
       break; // Exit loop once any button is pressed
     }
   }
@@ -43,4 +43,16 @@ void resetSelection() {
   turnOffLED(actionLED);
   triggeredUserButton = User::None;
   triggeredActionButton = Action::NoAction;
+}
+/*
+ * Blink the action LED to indicate the action cannot be taken due to some errors
+ */
+void indicateError() {
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(actionLED, HIGH);  // turn the LED on (HIGH is the voltage level)
+    delay(500);                      // wait for a second
+    digitalWrite(actionLED, LOW);   // turn the LED off by making the voltage LOW
+    delay(500);                      // wait for a second
+  }
+  Serial.println("Error detected");
 }

@@ -4,9 +4,9 @@
 volatile bool userLEDState = LOW;
 
 // ISR for user buttons
-void toggleUserLED_A1() { triggeredUserButton = A1; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
-void toggleUserLED_A2() { triggeredUserButton = A2; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
-void toggleUserLED_A3() { triggeredUserButton = A3; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
+void toggleUserLED_A1() { triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
+void toggleUserLED_A2() { triggeredUserButton = User2; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
+void toggleUserLED_A3() { triggeredUserButton = User3; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 // void toggleUserLED_A4() { triggeredUserButton = A4; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 
 
