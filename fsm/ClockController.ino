@@ -127,12 +127,19 @@ void ClockController::updateClock(int hour, int minute) {
     Serial.print("Updating clock to ");
     Serial.print(hour); Serial.print(":");
     if (minute < 10) Serial.print("0"); // single digit buffer
+    if (minute < 10) Serial.print("0"); // single digit buffer
     Serial.println(minute);
 
     // hour stepper
     hourStepper.step(targetHourSteps - currentHourSteps);
     currentHourSteps = targetHourSteps;
+    // hour stepper
+    hourStepper.step(targetHourSteps - currentHourSteps);
+    currentHourSteps = targetHourSteps;
 
+    // minute stepper
+    minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
+    currentMinuteSteps = targetMinuteSteps;
     // minute stepper
     minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
     currentMinuteSteps = targetMinuteSteps;
