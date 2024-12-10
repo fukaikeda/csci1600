@@ -164,5 +164,30 @@ void GCal::printHomeTimes() {
 *   Get the return home time from the map
 */
 String GCal::getHomeTime(String name) {
-  return homeTimes[name];
+  String time = homeTimes[name];
+  return extractTime(time);
+}
+
+
+String GCal::extractTime(String timeString) {
+  // Find the start and end positions of the time portion
+  int timeStart = timeString.indexOf(" ") + 1; // Find first space
+  timeStart = timeString.indexOf(" ", timeStart) + 1; // Skip day and month
+  timeStart = timeString.indexOf(" ", timeStart) + 1; // Skip date
+  timeStart = timeString.indexOf(" ", timeStart) + 1; //skip year
+  int timeEnd = timeString.indexOf(" ", timeStart);
+  
+  // Extract the time portion (e.g., "20:00:00")
+  String timePortion = timeString.substring(timeStart, timeEnd);
+  Serial.println("timePortion");
+  Serial.println(timePortion);
+  
+  // Split the time into hours and minutes
+  int colonIndex = timePortion.indexOf(":");
+  String hours = timePortion.substring(0, colonIndex);
+  String minutes = timePortion.substring(colonIndex + 1, colonIndex + 3);
+  
+  // Combine hours and minutes into a 4-digit format
+  String formattedTime = hours + minutes;
+  return formattedTime;
 }

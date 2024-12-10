@@ -2,31 +2,33 @@
 #define CLOCK_CONTROLLER_H
 
 #include <RTClib.h>
-#include <Servo.h>
+#include <Stepper.h>
 
-class ClockController {
-public:
-    ClockController(int hourPin, int minutePin);
+#define STEPS_PER_REVOLUTION 2000
+
+Stepper hourStepper(STEPS_PER_REVOLUTION, 4, 6, 5, 7);
+Stepper minuteStepper(STEPS_PER_REVOLUTION, 8, 10, 9, 11);
+
+struct ClockController {
     void begin();
     void updateClock(int hour, int minute);
     void handleRealTimeMode();
-    void handleInputMode();
+    void handleInputMode(String time);
     bool isRealTimeMode() const;
-
-private:
-    RTC_DS3231 rtc;
-    Servo hourServo;
-    Servo minuteServo;
-
-    int currentHourAngle;
-    int currentMinuteAngle;
-    unsigned long switchTime;
-    bool displayRealTime;
-    int inputHour, inputMinute;
-
+    void initClock();
     void initializeRTC();
-    int calculateHourAngle(int hour) const;
-    int calculateMinuteAngle(int minute) const;
+
+    RTC_DS3231 rtc;
+    // Stepper hourStepper;
+    // Stepper minuteStepper;
+
+    int currentHourSteps;
+    int currentMinuteSteps;
+    unsigned long switchTime;
+    int inputHour, inputMinute;
+    int calculateHourSteps(int hour) const;
+    int calculateMinuteSteps(int minute) const;
+    bool displayRealTime;
 };
 
 #endif

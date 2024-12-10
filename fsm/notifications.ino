@@ -4,16 +4,15 @@
 * Initailize a notification struct
 */
 void Notifications::initNotifications() {
-  Notifications temp;
-  temp.ssid = "iPhone";
-  temp.password = "testPass";
-  temp.phoneNumber = "+14018372684";
-  temp.apiKey = "4342046";
-  temp.messages[0] = "Keep going, %s! You're doing great!";
-  temp.messages[1] = "%s, remember to take it one step at a time!";
-  temp.messages[2] = "You're amazing, %s! Keep it up!";
-  temp.messages[3] = "Hey %s, you can do this!";
-  temp.messages[4] = "Don't give up, %s! The best is yet to come!";
+  ssid = "iPhone";
+  password = "testPass";
+  phoneNumber = "+14018372684";
+  apiKey = "4342046";
+  messages[0] = "Keep going, %s! You're doing great!";
+  messages[1] = "%s, remember to take it one step at a time!";
+  messages[2] = "You're amazing, %s! Keep it up!";
+  messages[3] = "Hey %s, you can do this!";
+  messages[4] = "Don't give up, %s! The best is yet to come!";
 }
 /* 
 *   Called before sending notifications, connects to wifi for

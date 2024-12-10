@@ -19,6 +19,7 @@ struct GCal {
     void printHomeTimes();
     void followRedirect(const String& redirectURL);
     String getHomeTime(String name);
+    String extractTime(String timeString);
 };
 
 #endif // GCAL_H
