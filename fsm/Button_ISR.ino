@@ -10,28 +10,21 @@ void toggleUserLED_A2() { triggeredUserButton = User2; userLEDState = HIGH; digi
 void toggleUserLED_A3() { triggeredUserButton = User3; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 // void toggleUserLED_A4() { triggeredUserButton = A4; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 
-/*
- * ISR for action buttons
- */
 void toggleActionLED() {
-  // Action buttons are only enabled after a user is selected 
-  if (triggeredUserButton != None) {
-    for (int i = 0; i < 2; i++) {
-      if (digitalRead(actionButtons[i]) == HIGH) {
-        triggeredActionButton = (Action) i; // Store the button that triggered the ISR
-        break;
-      }
+  // Identify the button that triggered the ISR
+  for (int i = 0; i < 2; i++) {
+    if (digitalRead(actionButtons[i]) == HIGH) {
+      triggeredActionButton = (Action) i; // Store the pin of the triggered button
+      break;
     }
-
-    // Toggle the action LED state
-    actionLEDState = HIGH;          
-    digitalWrite(actionLED, actionLEDState); 
   }
+
+  // Toggle the action LED state
+  actionLEDState = HIGH;          
+  digitalWrite(actionLED, actionLEDState); 
 }
 
-/*
- * Initialize button inputs and corresponding LED outputs and attach interrupts
- */
+
 void initButtons() {
   Serial.println("Hi setup for button ISR");
 
