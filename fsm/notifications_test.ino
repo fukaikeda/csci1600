@@ -1,3 +1,5 @@
+#ifdef TESTING
+
 #include "notifications.h"
 
 const char* phoneNumber = "+14018372684";
@@ -81,3 +83,5 @@ void loop() {
     // sendEncouragingMessage(phoneNumber, apiKey, "Kana");
     // delay(60000);
 }
+
+#endif
