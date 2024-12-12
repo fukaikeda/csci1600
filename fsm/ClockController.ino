@@ -76,7 +76,7 @@ void ClockController::handleRealTimeMode() {
 
 // Method for handling time input 
 
-void ClockController::handleInputMode(String time) {
+bool ClockController::handleInputMode(String time) {
 
     // Checks length of input 
     if (time.length() == 4) {
@@ -97,14 +97,17 @@ void ClockController::handleInputMode(String time) {
 
             // Sends motor commands
             updateClock(inputHour, inputMinute);
+            return true;
         }
         // Error handling for invalid time input 
         else {
             Serial.println("ERROR: Invalid time input. Use format HHMM.");
+            return false;
         }
     } 
     else {
         Serial.println("ERROR: Input must be 4 digits (HHMM).");
+        return false;
     }
 }
 

@@ -9,6 +9,7 @@ ClockController clockController;
 
 static int savedClock = 0;
 static bool message_finished = false;
+static bool clock_finished = false;
 
 void setup() {
   Serial.begin(9600);
@@ -50,21 +51,24 @@ State updateFSM(State curState, long mils) {
     Serial.println("State 1");
     if (mils - savedClock < 10000) {
       if (triggeredActionButton == Action::ReturnTime) { // Transition 1-2
+        noInterrupts();  // disable additional button inputs
         // fetch the return time
         gcalManager.fetchData();
         String time = gcalManager.getHomeTime(names[triggeredUserButton]);
+
         Serial.print("Return time for ");
         Serial.println(names[triggeredUserButton]);
         Serial.println(time);
-        clockController.handleInputMode(time);           
+
+        clock_finished = clockController.handleInputMode(time);   
+        while(!clock_finished); /// not sure if we need this        
         turnOnLED(actionLED);
-        ////////// some way to ignore additional user/message button inputs
         savedClock = mils;
         nextState = sWaitAfterTimeBut;
       } else if (triggeredActionButton == Action::Message) { // Transition 1-3
-        notifManager.sendEncouragingMessage(names[triggeredUserButton]);
+        noInterrupts(); // disable additional button inputs
+        message_finished = notifManager.sendEncouragingMessage(names[triggeredUserButton]);
         turnOnLED(actionLED);
-        ////////// some way to ignore additional user/returnTime button inputs
         savedClock = mils;
         nextState = sWaitAfterMessage; 
       }
@@ -76,10 +80,14 @@ State updateFSM(State curState, long mils) {
     break;
   case sWaitAfterTimeBut: // state 2
     Serial.println("State 2");
-    if (mils - savedClock > 20000) {  // Transition 2-0
-      clockController.handleRealTimeMode();     
-      resetSelection();
-      nextState = sDisplayRealTime;
+    if (clock_finished) {
+      if (mils - savedClock > 10000) {  // Transition 2-0
+        clockController.handleRealTimeMode();     
+        resetSelection();
+        clock_finished = false;
+        interrupts();
+        nextState = sDisplayRealTime;
+      }
     }
     break;
   case sWaitAfterMessage: // state 3 
@@ -87,11 +95,12 @@ State updateFSM(State curState, long mils) {
     if (mils - savedClock > 5000) {
       if (!message_finished) {  // Transition 3-0(b)
         indicateError();
-        Serial.println("error occured");
+        Serial.println("error occured while sending a message");
       }
       clockController.handleRealTimeMode();  
       resetSelection();
       message_finished = false;
+      interrupts();
       nextState = sDisplayRealTime;
     }
     break;
