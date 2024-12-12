@@ -4,8 +4,8 @@
 * Initailize a notification struct
 */
 void Notifications::initNotifications() {
-  ssid = "iPhone";
-  password = "testPass";
+  ssid = "Miaaa";
+  password = "12345678Mia";
   phoneNumber = "+14018372684";
   apiKey = "4342046";
   messages[0] = "Keep going, %s! You're doing great!";
@@ -72,8 +72,8 @@ int Notifications::sendNotification(const char* phoneNumber, const char* apiKey,
 *   personal to the name passed in and calls sendNotification to
 *   send the message via WhatsApp api
 */
-bool Notifications::sendEncouragingMessage(const char* name) {
-  if (name == nullptr or name == "") return false;
+int Notifications::sendEncouragingMessage(const char* name) {
+  if (name == nullptr or name == "") return -1;
     int numMessages = sizeof(messages) / sizeof(messages[0]);
     int randomIndex = random(0, numMessages);
 
@@ -82,7 +82,7 @@ bool Notifications::sendEncouragingMessage(const char* name) {
 
     if (sendNotification(phoneNumber, apiKey, formattedMessage) < 0) {
       Serial.println("Failed to send enocurage message notification");
-      return false;
+      return -1;
     }
-    return true;
+    return 0;
 }

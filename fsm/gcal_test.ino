@@ -1,4 +1,3 @@
-#ifdef TESTING
 
 #include "WiFiS3.h"
 #include <map>
@@ -190,8 +189,6 @@ void followRedirect(const String& redirectURL) {
     }
   }
 }
-
-#endif
 
 
 
