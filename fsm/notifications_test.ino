@@ -1,3 +1,5 @@
+#ifdef TESTING
+
 #include "notifications.h"
 
 const char* ssid = "iPhone";
@@ -85,3 +87,5 @@ void loop() {
     // sendEncouragingMessage(phoneNumber, apiKey, "Kana");
     // delay(60000);
 }
+
+#endif

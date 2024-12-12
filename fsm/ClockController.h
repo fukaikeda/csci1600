@@ -13,7 +13,7 @@ struct ClockController {
     void begin();
     void updateClock(int hour, int minute);
     void handleRealTimeMode();
-    void handleInputMode(String time);
+    bool handleInputMode(String time);
     bool isRealTimeMode() const;
     void initClock();
     void initializeRTC();
