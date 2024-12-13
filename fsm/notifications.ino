@@ -4,8 +4,8 @@
 * Initailize a notification struct
 */
 void Notifications::initNotifications() {
-  ssid = "iPhone";
-  password = "testPass";
+  ssid = "Miaaa";
+  password = "12345678Mia";
   phoneNumber = "+14018372684";
   apiKey = "4342046";
   messages[0] = "Keep going, %s! You're doing great!";

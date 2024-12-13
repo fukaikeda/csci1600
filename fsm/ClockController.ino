@@ -54,6 +54,8 @@ void ClockController::initializeRTC() {
 // Method for handling real time on the clock 
 
 void ClockController::handleRealTimeMode() {
+    Serial.println("not FSM, displayRealTime: ");
+    Serial.println(displayRealTime);
     if (displayRealTime) {
 
         // Get real time from rtc 
@@ -118,7 +120,16 @@ bool ClockController::isRealTimeMode() const {
 // Function for changing software comamnds to motor movements
 
 void ClockController::updateClock(int hour, int minute) {
-    
+    const int stepsPerRevolution = 2038;
+
+    // hourStepper.setSpeed(5);
+    // hourStepper.step(stepsPerRevolution);
+    // delay(1000);
+
+    // minuteStepper.setSpeed(5);
+    // minuteStepper.step(stepsPerRevolution);
+    // delay(1000);
+
     // Calculate target astweps
     int targetHourSteps = calculateHourSteps(hour);
     int targetMinuteSteps = calculateMinuteSteps(minute);
@@ -131,20 +142,22 @@ void ClockController::updateClock(int hour, int minute) {
     Serial.println(minute);
 
     // hour stepper
+    hourStepper.setSpeed(5);
     hourStepper.step(targetHourSteps - currentHourSteps);
     currentHourSteps = targetHourSteps;
-
+  
     // minute stepper
+    minuteStepper.setSpeed(5);
     minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
     currentMinuteSteps = targetMinuteSteps;
-    
+
     Serial.println("Clock update complete.");
 }
 
 // Helper function for calculating hour steps
 
 int ClockController::calculateHourSteps(int hour) const {
-    return map(hour % 12, 0, 12, 0, STEPS_PER_REVOLUTION);
+    return map((12 - (hour % 12)), 0, 12, 0, STEPS_PER_REVOLUTION);
 }
 
 // Helper function for calculating minute steps
@@ -152,3 +165,5 @@ int ClockController::calculateHourSteps(int hour) const {
 int ClockController::calculateMinuteSteps(int minute) const {
     return map(minute, 0, 60, 0, STEPS_PER_REVOLUTION);
 }
+
+

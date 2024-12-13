@@ -6,8 +6,13 @@
 
 #define STEPS_PER_REVOLUTION 2000
 
-Stepper hourStepper(STEPS_PER_REVOLUTION, 4, 6, 5, 7);
-Stepper minuteStepper(STEPS_PER_REVOLUTION, 8, 10, 9, 11);
+// Stepper hourStepper(STEPS_PER_REVOLUTION, 4, 6, 5, 7);
+// Stepper minuteStepper(STEPS_PER_REVOLUTION, 8, 10, 9, 11);
+
+Stepper hourStepper = Stepper(STEPS_PER_REVOLUTION, 4, 6, 5,7);
+Stepper minuteStepper = Stepper(STEPS_PER_REVOLUTION, 8, 10, 9,11);
+
+bool displayRealTime;
 
 struct ClockController {
     void begin();
@@ -28,7 +33,7 @@ struct ClockController {
     int inputHour, inputMinute;
     int calculateHourSteps(int hour) const;
     int calculateMinuteSteps(int minute) const;
-    bool displayRealTime;
+    // bool displayRealTime;
 };
 
 #endif

@@ -21,14 +21,24 @@ void setup() {
   gcalManager.initGCal();
   gcalManager.fetchData();
   clockController.initClock();
+  
+  // clockController.handleInputMode("1000");
+  // while(true){
+    
+  // }
   // gcalManager.connectWiFi()
+ 
  }
 
 void loop() {
   static State CURRENT_STATE = sDisplayRealTime;
-  updateActionButtonInputs(); // polling button inputs
+
+  if (displayRealTime){
+    clockController.handleRealTimeMode();  
+  }
+  // updateActionButtonInputs(); // polling button inputs
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
-  Serial.println(CURRENT_STATE);
+  // Serial.println(CURRENT_STATE);
   delay(10);
 }
 
@@ -53,6 +63,11 @@ State updateFSM(State curState, long mils) {
         // fetch the return time
         gcalManager.fetchData();
         String time = gcalManager.getHomeTime(names[triggeredUserButton]);
+        Serial.print("Return time for ");
+        Serial.println(names[triggeredUserButton]);
+        Serial.println(time);
+
+        displayRealTime = false; 
         clockController.handleInputMode(time);           
         turnOnLED(actionLED);
         ////////// some way to ignore additional user/message button inputs
@@ -73,9 +88,12 @@ State updateFSM(State curState, long mils) {
     break;
   case sWaitAfterTimeBut: // state 2
     Serial.println("State 2");
-    if (mils - savedClock > 5000) {  // Transition 2-0
+    if (mils - savedClock > 20000) {  // Transition 2-0
+      displayRealTime = true; 
       clockController.handleRealTimeMode();     
+      Serial.println("Going back to real time FSM");
       resetSelection();
+      nextState = sDisplayRealTime;
     }
     break;
   case sWaitAfterMessage: // state 3 
@@ -83,10 +101,13 @@ State updateFSM(State curState, long mils) {
     if (mils - savedClock > 5000) {
       if (!message_finished) {  // Transition 3-0(b)
         indicateError();
+        Serial.println("error occured");
       }
+      displayRealTime = true; 
       clockController.handleRealTimeMode();  
       resetSelection();
       message_finished = false;
+      nextState = sDisplayRealTime;
     }
     break;
   }

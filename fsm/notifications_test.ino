@@ -1,5 +1,9 @@
+#ifdef TESTING
+
 #include "notifications.h"
 
+const char* ssid = "iPhone";
+const char* password = "testPass";
 const char* phoneNumber = "+14018372684";
 void setup() {
     Serial.begin(9600);
@@ -10,6 +14,8 @@ void setup() {
     // Test: sendNotification with wifi not set up
     Notifications n;
     n.initNotifications();
+    n.ssid = ssid;
+    n.password = password;
 
     if (n.sendNotification(phoneNumber, n.apiKey, "Should fail") != -1) {
       Serial.println("Error: Should have failed sending notification");
@@ -81,3 +87,5 @@ void loop() {
     // sendEncouragingMessage(phoneNumber, apiKey, "Kana");
     // delay(60000);
 }
+
+#endif
