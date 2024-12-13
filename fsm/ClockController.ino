@@ -124,30 +124,31 @@ bool ClockController::isRealTimeMode() const {
 void ClockController::updateClock(int hour, int minute) {
     const int stepsPerRevolution = 2038;
 
-    // hourStepper.setSpeed(5);
-    // hourStepper.step(stepsPerRevolution);
-    // delay(1000);
-
-    // minuteStepper.setSpeed(5);
-    // minuteStepper.step(stepsPerRevolution);
-    // delay(1000);
-
-    // Calculate target astweps
+    // Calculate target steps
     int targetHourSteps = calculateHourSteps(hour);
     int targetMinuteSteps = calculateMinuteSteps(minute);
 
-    // Serial output for debugging 
+    // Check if the target hour and minute are the same as the current ones
+    if (hour == currentHour && minute == currentMinute) {
+        Serial.println("No update needed; time hasn't changed.");
+        return;
+    }
+
+    // Update current hour and minute
+    currentHour = hour;
+    currentMinute = minute;
+
+    // Serial output for debugging
     Serial.print("Updating clock to ");
     Serial.print(hour); Serial.print(":");
-    if (minute < 10) Serial.print("0"); // single digit buffer
-    if (minute < 10) Serial.print("0"); // single digit buffer
+    if (minute < 10) Serial.print("0");
     Serial.println(minute);
 
     // hour stepper
     hourStepper.setSpeed(5);
     hourStepper.step(targetHourSteps - currentHourSteps);
     currentHourSteps = targetHourSteps;
-  
+
     // minute stepper
     minuteStepper.setSpeed(5);
     minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
@@ -155,6 +156,7 @@ void ClockController::updateClock(int hour, int minute) {
 
     Serial.println("Clock update complete.");
 }
+
 
 // Helper function for calculating hour steps
 
