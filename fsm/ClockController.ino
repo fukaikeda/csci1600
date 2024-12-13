@@ -74,6 +74,8 @@ void ClockController::handleRealTimeMode() {
         displayRealTime = true;
         Serial.println("Switching back to real-time mode.");
     }
+
+    delay(50);
 }
 
 // Method for handling time input 
