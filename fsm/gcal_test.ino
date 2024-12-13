@@ -3,14 +3,14 @@
 #include <map>
 #include <String>
 #include "gcal.h"
-// // Wi-Fi credentials
+
 // const char* ssid = "Miaaa";       // Replace with your Wi-Fi SSID
 // const char* password = "12345678Mia"; // Replace with your Wi-Fi password
 
 const char* ssid = "iPhone";       // Replace with your Wi-Fi SSID
 const char* password = "testPass"; // Replace with your Wi-Fi password
 
-// mia's peronsal account google app script url 
+// Google Script URL 
 const char* urlPath= "https://script.google.com/macros/s/AKfycbzlxd6S-ICKerltaRHMZuLLY5uu0sigxrSwYrpZRVTKGtt7K9BRi6qSf9NOxINSZJr2yw/exec";
 GCal g;
 
