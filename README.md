@@ -60,19 +60,23 @@ Modules: Each component (e.g., buttons, LEDs, motors) is modularized for clarity
 
 1. Clone Repository:
 
+```
+
 git clone https://github.com/fukaikeda/csci1600.git
 
 cd csci1600/fsm
 
+```
+
 2. Install Required Libraries:
 
-Open the Arduino IDE and install the following libraries via Library Manager:
+Open the Arduino IDE and install the **rtclib** and **stepper** libraries via Library Manager.
 
-rtclib.h
+3. Load Code:
 
-stepper.h
+Open fsm.ino in Arduino IDE and upload it to your microcontroller.
 
-3. Load Code: Open fsm.ino in Arduino IDE and upload it to your microcontroller.
+4. Connect Hardware:
 
-Connect Hardware: Ensure all components (buttons, LEDs, motors) are connected as described in the system architecture.
+Ensure all components (buttons, LEDs, motors) are connected as described in the system architecture.
 
