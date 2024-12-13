@@ -60,6 +60,7 @@ Modules: Each component (e.g., buttons, LEDs, motors) is modularized for clarity
 1. Clone Repository:
 
 git clone https://github.com/fukaikeda/csci1600.git
+
 cd csci1600/fsm
 
 2. Install Required Libraries:
