@@ -1,6 +1,4 @@
-# Smart Clock
-
-CSCI1600 Final Project
+# Smart Clock: CSCI1600 Final Project
 
 Authors: Fuka Ikeda, Yanmi Yu, Jason Ni, Kana Takizawa
 
