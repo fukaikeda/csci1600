@@ -17,9 +17,13 @@ In normal operation, the clock displays the current time, updating through a rea
 
 ### Hardware Components:
 Buttons: 4 user selection buttons, 1 display-return-time button, 1 message button
+
 LEDs: Green indicates selected user, Red indicates action in progress
+
 Stepper Motors: Drive hour and minute hands of the clock
+
 WiFi Module: Establishes API connectivity
+
 RTC Module: Provides accurate current time
 
 ### Software Dependencies:
