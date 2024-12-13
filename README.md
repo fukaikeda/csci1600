@@ -2,6 +2,9 @@
 
 Authors: Fuka Ikeda, Yanmi Yu, Jason Ni, Kana Takizawa
 
+<img width="732" alt="image" src="https://github.com/user-attachments/assets/af51952e-aaba-48e1-a6e7-a60e96708297" />
+
+
 ## Overview
 
 The Smart Clock bridges the digital and physical worlds to connect housemates. This physical clock integrates Google Calendar (GCal) API notifications and real-time updates via WiFi. It offers two main functions:
