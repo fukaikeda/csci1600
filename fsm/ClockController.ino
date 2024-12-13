@@ -145,17 +145,11 @@ void ClockController::updateClock(int hour, int minute) {
     hourStepper.setSpeed(5);
     hourStepper.step(targetHourSteps - currentHourSteps);
     currentHourSteps = targetHourSteps;
-    // hour stepper
-    // hourStepper.step(targetHourSteps - currentHourSteps);
-    // currentHourSteps = targetHourSteps;
-
+  
     // minute stepper
     minuteStepper.setSpeed(5);
     minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
     currentMinuteSteps = targetMinuteSteps;
-    // minute stepper
-    // minuteStepper.step(targetMinuteSteps + currentMinuteSteps);
-    // currentMinuteSteps = targetMinuteSteps;
 
     Serial.println("Clock update complete.");
 }
