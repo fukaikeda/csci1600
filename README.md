@@ -67,8 +67,9 @@ cd csci1600/fsm
 
 Open the Arduino IDE and install the following libraries via Library Manager:
 
-rtclib
-stepper
+rtclib.h
+
+stepper.h
 
 3. Load Code: Open fsm.ino in Arduino IDE and upload it to your microcontroller.
 
