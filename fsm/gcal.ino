@@ -1,5 +1,3 @@
-#ifdef TESTING
-
 #include "gcal.h"
 
 /*
@@ -211,5 +209,3 @@ String GCal::extractTime(String timeString) {
   String formattedTime = hours + minutes;
   return formattedTime;
 }
-
-#endif
