@@ -37,9 +37,10 @@ void loop() {
     clockController.handleRealTimeMode();  
   }
   // updateActionButtonInputs(); // polling button inputs
+  
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
-  // Serial.println(CURRENT_STATE);
-  delay(10);
+
+  delay(10); // Delay is added to avoid redundant updates
 }
 
 State updateFSM(State curState, long mils) {
@@ -48,7 +49,7 @@ State updateFSM(State curState, long mils) {
 
   State nextState;
   switch(curState) {
-  case sDisplayRealTime: // state 0
+  case sDisplayRealTime: // State 0
     Serial.println("State 0");
     if (triggeredUserButton != User::None) { // Transition 0-1
       turnOnLED(userLED);
@@ -56,7 +57,7 @@ State updateFSM(State curState, long mils) {
       savedClock = mils;
     }
     break;
-  case sWaitAfterUserBut: // state 1
+  case sWaitAfterUserBut: // State 1
     Serial.println("State 1");
     if (mils - savedClock < 10000) {
       if (triggeredActionButton == Action::ReturnTime) { // Transition 1-2
@@ -86,7 +87,7 @@ State updateFSM(State curState, long mils) {
       nextState = sDisplayRealTime;
     }
     break;
-  case sWaitAfterTimeBut: // state 2
+  case sWaitAfterTimeBut: // State 2
     Serial.println("State 2");
     if (mils - savedClock > 20000) {  // Transition 2-0
       displayRealTime = true; 
