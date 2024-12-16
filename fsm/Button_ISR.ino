@@ -12,17 +12,31 @@ void toggleUserLED_A3() { triggeredUserButton = User3; userLEDState = HIGH; digi
 
 void toggleActionLED() {
   // Identify the button that triggered the ISR
-  for (int i = 0; i < 2; i++) {
-    if (digitalRead(actionButtons[i]) == HIGH) {
-      triggeredActionButton = (Action) i; // Store the pin of the triggered button
-      break;
-    }
-  }
+  // for (int i = 0; i < 2; i++) {
+  //   if (digitalRead(actionButtons[i]) == HIGH) {
+  //     triggeredActionButton = (Action) i; // Store the pin of the triggered button
+  //     break;
+  //   }
+  // }
 
-  // Toggle the action LED state
-  actionLEDState = HIGH;          
-  digitalWrite(actionLED, actionLEDState); 
+  // // Toggle the action LED state
+  // actionLEDState = HIGH;          
+  // digitalWrite(actionLED, actionLEDState); 
+
+  if (triggeredUserButton != None) {
+    for (int i = 0; i < 2; i++) {
+      if (digitalRead(actionButtons[i]) == HIGH) {
+        triggeredActionButton = (Action) i; // Store the button that triggered the ISR
+        break;
+      }
+    }
+
+    // Toggle the action LED state
+    actionLEDState = HIGH;          
+    digitalWrite(actionLED, actionLEDState); 
+  }
 }
+
 
 
 void initButtons() {

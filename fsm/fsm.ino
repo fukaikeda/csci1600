@@ -8,7 +8,7 @@ GCal gcalManager;
 ClockController clockController;
 
 static int savedClock = 0;
-static bool message_finished = false;
+// static bool clock_finied = false;
 
 void setup() {
   Serial.begin(9600);
@@ -21,12 +21,6 @@ void setup() {
   gcalManager.initGCal();
   gcalManager.fetchData();
   clockController.initClock();
-  
-  // clockController.handleInputMode("1000");
-  // while(true){
-    
-  // }
-  // gcalManager.connectWiFi()
  
  }
 
@@ -38,7 +32,7 @@ void loop() {
   }
   // updateActionButtonInputs(); // polling button inputs
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
-  // Serial.println(CURRENT_STATE);
+
   delay(10);
 }
 
@@ -52,6 +46,7 @@ State updateFSM(State curState, long mils) {
     Serial.println("State 0");
     if (triggeredUserButton != User::None) { // Transition 0-1
       turnOnLED(userLED);
+      displayRealTime = true; 
       nextState = sWaitAfterUserBut;
       savedClock = mils;
     }
@@ -90,7 +85,7 @@ State updateFSM(State curState, long mils) {
     Serial.println("State 2");
     if (mils - savedClock > 20000) {  // Transition 2-0
       displayRealTime = true; 
-      clockController.handleRealTimeMode();     
+      // clockController.handleRealTimeMode();     
       Serial.println("Going back to real time FSM");
       resetSelection();
       nextState = sDisplayRealTime;
@@ -99,14 +94,14 @@ State updateFSM(State curState, long mils) {
   case sWaitAfterMessage: // state 3 
     Serial.println("State 3");
     if (mils - savedClock > 5000) {
-      if (!message_finished) {  // Transition 3-0(b)
+      if (!notifManager.message_finished) {  // Transition 3-0(b)
         indicateError();
         Serial.println("error occured");
       }
       displayRealTime = true; 
-      clockController.handleRealTimeMode();  
+      // clockController.handleRealTimeMode();  
       resetSelection();
-      message_finished = false;
+      notifManager.message_finished = false;
       nextState = sDisplayRealTime;
     }
     break;

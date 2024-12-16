@@ -8,6 +8,7 @@ void Notifications::initNotifications() {
   password = "12345678Mia";
   phoneNumber = "+14018372684";
   apiKey = "4342046";
+  message_finished = false;
   messages[0] = "Keep going, %s! You're doing great!";
   messages[1] = "%s, remember to take it one step at a time!";
   messages[2] = "You're amazing, %s! Keep it up!";
@@ -82,7 +83,10 @@ int Notifications::sendEncouragingMessage(const char* name) {
 
     if (sendNotification(phoneNumber, apiKey, formattedMessage) < 0) {
       Serial.println("Failed to send enocurage message notification");
+      message_finished = false;
       return -1;
     }
+
+    message_finished = true;
     return 0;
 }

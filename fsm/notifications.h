@@ -18,6 +18,7 @@ struct Notifications {
   void setupWiFi();
   int sendNotification(const char* phoneNumber, const char* apiKey, const char* message);
   int sendEncouragingMessage(const char* name);
+  bool message_finished;
 };
 
 #endif // NOTIFICATIONS_H
