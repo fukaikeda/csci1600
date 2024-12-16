@@ -2,17 +2,31 @@
 #include "fsm.h"
 
 // ISR for user buttons
-void toggleUserLED_A1() { triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
-void toggleUserLED_A2() { triggeredUserButton = User2; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
-void toggleUserLED_A3() { triggeredUserButton = User3; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
+void toggleUserLED_A1() { 
+  if (triggeredUserButton == None){
+    triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+  }
+}
+void toggleUserLED_A2() { 
+  if (triggeredUserButton == None){
+    triggeredUserButton = User2; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+  }
+}
+void toggleUserLED_A3() {
+  if (triggeredUserButton == None){
+    triggeredUserButton = User3; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+  }
+}
 // void toggleUserLED_A4() { triggeredUserButton = A4; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 
 void toggleActionLED() {
   if (triggeredUserButton != None) {
     for (int i = 0; i < 2; i++) {
       if (digitalRead(actionButtons[i]) == HIGH) {
-        triggeredActionButton = (Action) i; // Store the button that triggered the ISR
-        break;
+        if (triggeredActionButton == NoAction){
+          triggeredActionButton = (Action) i; // Store the button that triggered the ISR
+          break;
+        }
       }
     }
 
@@ -43,4 +57,5 @@ void initButtons() {
     pinMode(actionButtons[i], INPUT_PULLUP); // Set as input with pull-up
     attachInterrupt(digitalPinToInterrupt(actionButtons[i]), toggleActionLED, RISING);
   }
+  // petWatchdog(); 
 }

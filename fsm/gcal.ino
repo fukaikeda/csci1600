@@ -40,10 +40,13 @@ void GCal::connectWiFi() {
 */
 
 void GCal::fetchData() {
+    
+
     const int maxRetries = 5;
     int retryCount = 0;
 
     while (retryCount < maxRetries) { // Attemps connection five times 
+        petWatchdog();
         Serial.println("\nConnecting to Google API...");
 
         if (sslClient.connect("script.google.com", 443)) {
@@ -61,6 +64,7 @@ void GCal::fetchData() {
             // Read and handle the response
             Serial.println("Response:");
             while (sslClient.connected() || sslClient.available()) {
+                petWatchdog();
                 if (sslClient.available()) {
                     String line = sslClient.readStringUntil('\n');
                     Serial.println(line);
@@ -79,9 +83,11 @@ void GCal::fetchData() {
             // Handle redirect if needed
             if (isRedirect && !redirectLocation.isEmpty()) {
                 Serial.println("Redirect detected to: " + redirectLocation);
+                petWatchdog();
                 followRedirect(redirectLocation);
+                petWatchdog();
             }
-
+            petWatchdog();
             return; // Exit function on success
         } else {
             Serial.println("Connection failed!");
@@ -104,6 +110,7 @@ void GCal::followRedirect(const String& redirectURL) {
     int retryCount = 0;
 
     while (retryCount < maxRetries) { // Attemps connection five times
+        petWatchdog();
         Serial.println("\nConnecting to redirected URL...");
 
         int index = redirectURL.indexOf("/", 8); // Skip "https://"
@@ -126,6 +133,7 @@ void GCal::followRedirect(const String& redirectURL) {
 
             Serial.println("Filtering response from redirected URL:");
             while (sslClient.connected() || sslClient.available()) {
+                petWatchdog();
                 if (sslClient.available()) {
                     String line = sslClient.readStringUntil('\n');
                     line.trim();
@@ -152,6 +160,7 @@ void GCal::followRedirect(const String& redirectURL) {
         } else {
             Serial.println("Connection to redirected URL failed!");
             retryCount++;
+            petWatchdog();
             if (retryCount < maxRetries) {
                 Serial.println("Retrying...");
                 delay(2000);
