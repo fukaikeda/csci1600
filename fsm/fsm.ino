@@ -113,6 +113,7 @@ State updateFSM(State curState, long mils) {
       clockController.displayRealTime = true;     
       Serial.println("Going back to real time FSM");
       resetSelection();
+      savedClock = mils;
       petWatchdog(); // Reset WDT after successful action
       savedClock = mils;
       nextState = sDisplayRealTime;
