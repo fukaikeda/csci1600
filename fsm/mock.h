@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 struct mockNotifications {
+  bool message_finished = false;
   void setupWiFi(const char* ssid, const char* password) {
     Serial.println("Mock WiFi setup with SSID: " + String(ssid));
   }

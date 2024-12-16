@@ -24,8 +24,6 @@ ClockController clockController;
 
 #endif
 
-static int savedClock = 0;
-
 #ifndef RUN_TESTS
 void setup() {
   Serial.begin(9600);
