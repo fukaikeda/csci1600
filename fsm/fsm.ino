@@ -1,4 +1,19 @@
+#define MOCK
+#define RUN_TESTS
+
 #include "fsm.h"
+
+volatile bool userLEDState = LOW;
+volatile bool actionLEDState = LOW;
+
+#ifdef MOCK
+#include "mock.h"
+
+mockNotifications notifManager;
+mockCalendar gcalManager;
+mockClock clockController;
+
+#else
 #include "notifications.h"
 #include "gcal.h"
 #include "ClockController.h"
@@ -7,12 +22,15 @@ Notifications notifManager;
 GCal gcalManager;
 ClockController clockController;
 
-static int savedClock = 0;
-// static bool clock_finied = false;
+#endif
 
+static int savedClock = 0;
+
+#ifndef RUN_TESTS
 void setup() {
   Serial.begin(9600);
   while (!Serial); // Wait for Serial to initialize
+  Serial.println("initalized");
   
   // initialize each component
   initButtons();
@@ -20,33 +38,27 @@ void setup() {
   notifManager.setupWiFi();
   gcalManager.initGCal();
   gcalManager.fetchData();
-  clockController.initClock();
- 
+  clockController.initClock(); 
  }
 
 void loop() {
   static State CURRENT_STATE = sDisplayRealTime;
-
-  if (displayRealTime){
+  if (clockController.displayRealTime){
     clockController.handleRealTimeMode();  
-  }
-  // updateActionButtonInputs(); // polling button inputs
+  }  
   CURRENT_STATE = updateFSM(CURRENT_STATE, millis());
-
-  delay(10);
+  delay(10); // Delay is added to avoid redundant updates
 }
 
-State updateFSM(State curState, long mils) {
-  // Serial.print("User button selected: ");
-  // Serial.println(triggeredUserButton);
+#endif
 
+State updateFSM(State curState, long mils) {
   State nextState;
   switch(curState) {
-  case sDisplayRealTime: // state 0
-    Serial.println("State 0");
+  case sDisplayRealTime: // State 0
+    // Serial.println("State 0");
     if (triggeredUserButton != User::None) { // Transition 0-1
       turnOnLED(userLED);
-      displayRealTime = true; 
       nextState = sWaitAfterUserBut;
       savedClock = mils;
     }
@@ -62,16 +74,14 @@ State updateFSM(State curState, long mils) {
         Serial.println(names[triggeredUserButton]);
         Serial.println(time);
 
-        displayRealTime = false; 
+        clockController.displayRealTime = false; 
         clockController.handleInputMode(time);           
         turnOnLED(actionLED);
-        ////////// some way to ignore additional user/message button inputs
         savedClock = mils;
         nextState = sWaitAfterTimeBut;
       } else if (triggeredActionButton == Action::Message) { // Transition 1-3
         notifManager.sendEncouragingMessage(names[triggeredUserButton]);
         turnOnLED(actionLED);
-        ////////// some way to ignore additional user/returnTime button inputs
         savedClock = mils;
         nextState = sWaitAfterMessage; 
       }
@@ -84,8 +94,7 @@ State updateFSM(State curState, long mils) {
   case sWaitAfterTimeBut: // state 2
     Serial.println("State 2");
     if (mils - savedClock > 20000) {  // Transition 2-0
-      displayRealTime = true; 
-      // clockController.handleRealTimeMode();     
+      clockController.displayRealTime = true;     
       Serial.println("Going back to real time FSM");
       resetSelection();
       nextState = sDisplayRealTime;
@@ -96,10 +105,9 @@ State updateFSM(State curState, long mils) {
     if (mils - savedClock > 5000) {
       if (!notifManager.message_finished) {  // Transition 3-0(b)
         indicateError();
-        Serial.println("error occured");
+        Serial.println("error occured while sending a message");
       }
-      displayRealTime = true; 
-      // clockController.handleRealTimeMode();  
+      clockController.displayRealTime = true; 
       resetSelection();
       notifManager.message_finished = false;
       nextState = sDisplayRealTime;

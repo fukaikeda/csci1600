@@ -2,8 +2,9 @@
 
 #include "notifications.h"
 
-const char* phoneNumber = "+14018372684";
-
+const char* ssid = "iPhone";
+const char* password = "testPass";
+const char* phoneNumber = "+10000000000"; // add phone number
 void setup() {
     Serial.begin(9600);
     while (!Serial) {}
@@ -13,6 +14,8 @@ void setup() {
     // Test: sendNotification with wifi not set up
     Notifications n;
     n.initNotifications();
+    n.ssid = ssid;
+    n.password = password;
 
     if (n.sendNotification(phoneNumber, n.apiKey, "Should fail") != -1) {
       Serial.println("Error: Should have failed sending notification");

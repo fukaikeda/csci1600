@@ -1,5 +1,9 @@
 #include "gcal.h"
 
+/*
+ * Initializes the GCal by setting ssid and password as well as specfic users. 
+ */
+
 void GCal::initGCal() {
   ssid = "iPhone";
   password = "testPass";
@@ -11,6 +15,10 @@ void GCal::initGCal() {
     {"Kana", ""}
   };
 }
+
+/*
+ * Connects to Wi-Fi using ID and password intialized. 
+ */
 
 void GCal::connectWiFi() {
     Serial.print("Connecting to Wi-Fi: ");
@@ -30,11 +38,12 @@ void GCal::connectWiFi() {
 /* 
  * Fetch data from Google API
 */
+
 void GCal::fetchData() {
     const int maxRetries = 5;
     int retryCount = 0;
 
-    while (retryCount < maxRetries) {
+    while (retryCount < maxRetries) { // Attemps connection five times 
         Serial.println("\nConnecting to Google API...");
 
         if (sslClient.connect("script.google.com", 443)) {
@@ -88,13 +97,13 @@ void GCal::fetchData() {
 }
 
 /* 
- * Follow redirect URL
+ * Follows redirect URL.
 */
 void GCal::followRedirect(const String& redirectURL) {
     const int maxRetries = 5;
     int retryCount = 0;
 
-    while (retryCount < maxRetries) {
+    while (retryCount < maxRetries) { // Attemps connection five times
         Serial.println("\nConnecting to redirected URL...");
 
         int index = redirectURL.indexOf("/", 8); // Skip "https://"
@@ -147,11 +156,15 @@ void GCal::followRedirect(const String& redirectURL) {
                 Serial.println("Retrying...");
                 delay(2000);
             } else {
-                Serial.println("Max retries reached. Skipping this attempt.");
+                Serial.println("Max retries reached. Skipping this attempt."); // Exits method if it failes more then five times 
             }
         }
     }
 }
+
+/*
+ * Prints fetched time for debugging and serial checking
+ */
 
 void GCal::printHomeTimes() {
     Serial.println("\nHome Times:");
@@ -163,13 +176,18 @@ void GCal::printHomeTimes() {
 /* 
 *   Get the return home time from the map
 */
+
 String GCal::getHomeTime(String name) {
   String time = homeTimes[name];
   return extractTime(time);
 }
 
+/*
+ * Converts time fetched into formatted data 
+ */
 
 String GCal::extractTime(String timeString) {
+  
   // Find the start and end positions of the time portion
   int timeStart = timeString.indexOf(" ") + 1; // Find first space
   timeStart = timeString.indexOf(" ", timeStart) + 1; // Skip day and month

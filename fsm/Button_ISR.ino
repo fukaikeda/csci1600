@@ -1,8 +1,5 @@
 #include <map>
-
-// States for LEDs
-volatile bool userLEDState = LOW;
-volatile bool actionLEDState = LOW;
+#include "fsm.h"
 
 // ISR for user buttons
 void toggleUserLED_A1() { triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
@@ -11,18 +8,6 @@ void toggleUserLED_A3() { triggeredUserButton = User3; userLEDState = HIGH; digi
 // void toggleUserLED_A4() { triggeredUserButton = A4; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
 
 void toggleActionLED() {
-  // Identify the button that triggered the ISR
-  // for (int i = 0; i < 2; i++) {
-  //   if (digitalRead(actionButtons[i]) == HIGH) {
-  //     triggeredActionButton = (Action) i; // Store the pin of the triggered button
-  //     break;
-  //   }
-  // }
-
-  // // Toggle the action LED state
-  // actionLEDState = HIGH;          
-  // digitalWrite(actionLED, actionLEDState); 
-
   if (triggeredUserButton != None) {
     for (int i = 0; i < 2; i++) {
       if (digitalRead(actionButtons[i]) == HIGH) {
@@ -36,7 +21,6 @@ void toggleActionLED() {
     digitalWrite(actionLED, actionLEDState); 
   }
 }
-
 
 
 void initButtons() {
