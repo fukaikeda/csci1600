@@ -76,7 +76,11 @@ Open the Arduino IDE and install the **rtclib** and **stepper** libraries via Li
 
 Open fsm.ino in Arduino IDE and upload it to your microcontroller.
 
-4. Connect Hardware:
+4. Add info:
+   
+Add phone number, WiFi account, and API. key within GCal.ino and Notifications.ino
+
+5. Connect Hardware:
 
 Ensure all components (buttons, LEDs, motors) are connected as described in the system architecture.
 
