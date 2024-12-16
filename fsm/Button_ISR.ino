@@ -1,8 +1,5 @@
 #include <map>
-
-// States for LEDs
-volatile bool userLEDState = LOW;
-volatile bool actionLEDState = LOW;
+#include "fsm.h"
 
 // ISR for user buttons
 void toggleUserLED_A1() { triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }

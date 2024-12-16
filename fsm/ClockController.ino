@@ -1,5 +1,4 @@
 #include "ClockController.h"
-#include <Arduino.h>
 
 // Method for intializing clock 
 
