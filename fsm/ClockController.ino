@@ -3,7 +3,9 @@
 // Method for intializing clock 
 
 void ClockController::initClock() {
+  
     // Serial.begin(9600);
+    petWatchdog(); 
     currentHourSteps = 0;
     currentMinuteSteps = 0;
     switchTime = 0;
@@ -16,7 +18,11 @@ void ClockController::initClock() {
 
     // Callibration of clock through terminal input
     Serial.println("Enter current clock time as HHMM (e.g., 1030 for 10:30):");
-    while (!Serial.available());
+    // while (!Serial.available());
+    while (!Serial.available()) {
+      // petWatchdog();  // Reset watchdog while waiting for input
+      // delay(50);      // Include some delay to reduce CPU usage
+    }
     String initialTime = Serial.readStringUntil('\n');
     int initHour = initialTime.substring(0, 2).toInt();
     int initMinute = initialTime.substring(2, 4).toInt();
@@ -31,31 +37,36 @@ void ClockController::initClock() {
     Serial.println("Initialization complete.");
     Serial.print("Hour steps: "); Serial.println(currentHourSteps);
     Serial.print("Minute steps: "); Serial.println(currentMinuteSteps);
+    // petWatchdog(); 
+    
 }
 
 // Method for intializing RTC (real-time clock module) 
 
 void ClockController::initializeRTC() {
-
+    petWatchdog(); 
     // Error handling for RTC not found
     if (!rtc.begin()) {
         Serial.println("ERROR: Couldn't find RTC. Check connections.");
         while (1);
     }
-
+    petWatchdog(); 
     // Initilization state in first setup or when power is lost
     if (rtc.lostPower()) {
         Serial.println("RTC lost power. Setting to compile time.");
         rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     }
+    petWatchdog(); 
 }
 
 // Method for handling real time on the clock 
 
 void ClockController::handleRealTimeMode() {
-    Serial.println("not FSM, displayRealTime: ");
-    Serial.println(displayRealTime);
+    // Serial.println("not FSM, displayRealTime: ");
+    // Serial.println(displayRealTime);
+    petWatchdog(); 
     if (displayRealTime) {
+        petWatchdog(); 
 
         // Get real time from rtc 
         DateTime now = rtc.now();
@@ -68,19 +79,23 @@ void ClockController::handleRealTimeMode() {
         Serial.println(now.minute(), DEC);
 
         // Tells clock to update 
+        petWatchdog(); 
         updateClock(now.hour(), now.minute());
+        petWatchdog(); 
     } else if (millis() > switchTime) {
+        petWatchdog(); 
         displayRealTime = true;
         Serial.println("Switching back to real-time mode.");
+        petWatchdog(); 
     }
-
+    petWatchdog(); 
     delay(50);
 }
 
 // Method for handling time input 
 
 int ClockController::handleInputMode(String time) {
-
+    petWatchdog();
     // Checks length of input 
     if (time.length() == 4) {
 
@@ -100,17 +115,22 @@ int ClockController::handleInputMode(String time) {
 
             // Sends motor commands
             updateClock(inputHour, inputMinute);
+            petWatchdog();
         }
         // Error handling for invalid time input 
         else {
             Serial.println("ERROR: Invalid time input. Use format HHMM.");
+            // petWatchdog();
             return -1;
         }
+      // petWatchdog();
     } 
     else {
         Serial.println("ERROR: Input must be 4 digits (HHMM).");
+        // petWatchdog();
         return -1;
     }
+    petWatchdog();
     return 0;
 }
 
@@ -124,15 +144,17 @@ bool ClockController::isRealTimeMode() const {
 // Function for changing software comamnds to motor movements
 
 void ClockController::updateClock(int hour, int minute) {
+    petWatchdog();
     const int stepsPerRevolution = 2038;
 
     // Calculate target steps
     int targetHourSteps = calculateHourSteps(hour);
     int targetMinuteSteps = calculateMinuteSteps(minute);
-
+    petWatchdog();
     // Check if the target hour and minute are the same as the current ones
     if (hour == currentHour && minute == currentMinute) {
-        Serial.println("No update needed; time hasn't changed.");
+        // Serial.println("No update needed; time hasn't changed.");
+        petWatchdog();
         return;
     }
 
@@ -146,17 +168,24 @@ void ClockController::updateClock(int hour, int minute) {
     if (minute < 10) Serial.print("0");
     Serial.println(minute);
 
-    // hour stepper
-    hourStepper.setSpeed(5);
+    // hour stepper， need to petWatchdog since moving motor takes time
+    petWatchdog();
+    hourStepper.setSpeed(10);
+    petWatchdog();
+    
     hourStepper.step(targetHourSteps - currentHourSteps);
+    petWatchdog();
     currentHourSteps = targetHourSteps;
 
     // minute stepper
-    minuteStepper.setSpeed(5);
+    minuteStepper.setSpeed(10);
+    petWatchdog();
     minuteStepper.step(targetMinuteSteps - currentMinuteSteps);
+    petWatchdog();
     currentMinuteSteps = targetMinuteSteps;
 
     Serial.println("Clock update complete.");
+    petWatchdog();
 }
 
 
