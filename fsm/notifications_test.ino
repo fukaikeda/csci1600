@@ -4,7 +4,7 @@
 
 const char* ssid = "iPhone";
 const char* password = "testPass";
-const char* phoneNumber = "+14018372684";
+const char* phoneNumber = "+10000000000"; // add phone number
 void setup() {
     Serial.begin(9600);
     while (!Serial) {}

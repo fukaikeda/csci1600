@@ -4,10 +4,10 @@
 * Initailize a notification struct
 */
 void Notifications::initNotifications() {
-  ssid = "Miaaa";
-  password = "12345678Mia";
-  phoneNumber = "+14018372684";
-  apiKey = "4342046";
+  ssid = "placeholder"; // add ssid
+  password = "placeholder"; // add wifi
+  phoneNumber = "+11111111111"; // add phone number
+  apiKey = "0000000"; // add api key
   messages[0] = "Keep going, %s! You're doing great!";
   messages[1] = "%s, remember to take it one step at a time!";
   messages[2] = "You're amazing, %s! Keep it up!";
