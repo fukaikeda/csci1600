@@ -14,6 +14,7 @@ struct mockNotifications {
   }
 
   int sendEncouragingMessage(const char* name) {
+    message_finished = true;
     return 0;
   }
 };

@@ -54,7 +54,6 @@ volatile User triggeredUserButton = User::None; // Variable to track the user bu
 volatile Action triggeredActionButton = Action::NoAction; // Variable to track the action button that triggered ISR
 
 int savedClock = 0;
-bool message_finished = true;
 
 void turnOnLED(int ledPin) {
   digitalWrite(ledPin, HIGH);

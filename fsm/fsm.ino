@@ -62,7 +62,7 @@ State updateFSM(State curState, long mils) {
     }
     break;
   case sWaitAfterUserBut: // state 1
-    Serial.println("State 1");
+    // Serial.println("State 1");
     if (mils - savedClock < 10000) {
       if (triggeredActionButton == Action::ReturnTime) { // Transition 1-2
         // fetch the return time
@@ -90,16 +90,17 @@ State updateFSM(State curState, long mils) {
     }
     break;
   case sWaitAfterTimeBut: // state 2
-    Serial.println("State 2");
+    // Serial.println("State 2");
     if (mils - savedClock > 20000) {  // Transition 2-0
       clockController.displayRealTime = true;     
       Serial.println("Going back to real time FSM");
       resetSelection();
+      savedClock = mils;
       nextState = sDisplayRealTime;
     }
     break;
   case sWaitAfterMessage: // state 3 
-    Serial.println("State 3");
+    // Serial.println("State 3");
     if (mils - savedClock > 5000) {
       if (!notifManager.message_finished) {  // Transition 3-0(b)
         indicateError();
@@ -108,6 +109,7 @@ State updateFSM(State curState, long mils) {
       clockController.displayRealTime = true; 
       resetSelection();
       notifManager.message_finished = false;
+      savedClock = mils;
       nextState = sDisplayRealTime;
     }
     break;

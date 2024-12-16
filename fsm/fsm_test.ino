@@ -7,7 +7,6 @@
 typedef struct {
   State curState;
   long savedClock;
-  bool message_finished;
   User triggeredUserButton;
   Action triggeredActionButton;
 } FSM_StateVars;
@@ -50,23 +49,19 @@ bool testFSMTransition(FSM_StateVars startStateVars, FSM_StateVars expectedState
   // Set initial state variables
   State curState = startStateVars.curState;
   savedClock = startStateVars.savedClock;
-  message_finished = startStateVars.message_finished;
   triggeredUserButton = startStateVars.triggeredUserButton;
   triggeredActionButton = startStateVars.triggeredActionButton;
 
   // Apply inputs
-  triggeredUserButton = inputs.userButton;
-  triggeredActionButton = inputs.actionButton;
+  if (startStateVars.triggeredUserButton == User::None) triggeredUserButton = inputs.userButton;
+  if (startStateVars.triggeredActionButton == Action::NoAction) triggeredActionButton = inputs.actionButton;
 
   // Call updateFSM
-  Serial.println("Calling update");
   State resultState = updateFSM(curState, inputs.millis);
-  Serial.println("Returned update");
 
   // Compare resulting state variables
   bool passed = (resultState == expectedStateVars.curState &&
                  savedClock == expectedStateVars.savedClock &&
-                 message_finished == expectedStateVars.message_finished &&
                  triggeredUserButton == expectedStateVars.triggeredUserButton &&
                  triggeredActionButton == expectedStateVars.triggeredActionButton);
 
@@ -92,27 +87,30 @@ bool testFSMTransition(FSM_StateVars startStateVars, FSM_StateVars expectedState
 void runAllTests() {
   // Define test cases
   FSM_StateVars startStates[] = {
-    {sDisplayRealTime, 0, false, User::None, Action::NoAction},
-    {sWaitAfterUserBut, 1000, false, User::User1, Action::ReturnTime},
-    {sWaitAfterUserBut, 2000, false, User::User2, Action::Message},
-    {sWaitAfterTimeBut, 3000, false, User::None, Action::NoAction},
-    {sWaitAfterMessage, 4000, true, User::None, Action::NoAction}
+    {sDisplayRealTime, 0, User::None, Action::NoAction},
+    {sWaitAfterUserBut, 1000, User::User1, Action::NoAction},
+    {sWaitAfterTimeBut, 1000, User::User1, Action::ReturnTime},
+    {sDisplayRealTime, 22000, User::None, Action::NoAction},
+    {sWaitAfterUserBut, 23000, User::User2, Action::NoAction},
+    {sWaitAfterMessage, 24000, User::User2, Action::Message}
   };
 
   FSM_StateVars expectedStates[] = {
-    {sWaitAfterUserBut, 0, false, User::User1, Action::NoAction}, // Transition: User button pressed
-    {sWaitAfterTimeBut, 1000, false, User::User1, Action::ReturnTime}, // Transition: Action - ReturnTime
-    {sWaitAfterMessage, 2000, true, User::User2, Action::Message}, // Transition: Action - Message
-    {sDisplayRealTime, 0, false, User::None, Action::NoAction}, // Transition: Timeout in sWaitAfterTimeBut
-    {sDisplayRealTime, 0, false, User::None, Action::NoAction}  // Transition: Timeout in sWaitAfterMessage
+    {sWaitAfterUserBut, 0, User::User1, Action::NoAction},
+    {sWaitAfterTimeBut, 1000, User::User1, Action::ReturnTime},
+    {sDisplayRealTime, 22000, User::None, Action::NoAction},
+    {sWaitAfterUserBut, 23000, User::User2, Action::NoAction},
+    {sWaitAfterMessage, 24000, User::User2, Action::Message},
+    {sDisplayRealTime, 30000, User::None, Action::NoAction},
   };
 
   FSM_Inputs inputs[] = {
     {0, User::User1, Action::NoAction},
     {1000, User::None, Action::ReturnTime},
-    {2000, User::None, Action::Message},
-    {3000, User::None, Action::NoAction},
-    {4000, User::None, Action::NoAction}
+    {22000, User::None, Action::Message},
+    {23000, User::User2, Action::NoAction},
+    {24000, User::User3, Action::Message},
+    {30000, User::User3, Action::Message}
   };
 
   int numTests = sizeof(startStates) / sizeof(startStates[0]);
