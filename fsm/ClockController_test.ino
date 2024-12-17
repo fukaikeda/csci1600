@@ -1,3 +1,5 @@
+#ifdef RUN_TESTS
+
 #include <RTClib.h>
 #include <Stepper.h>
 #include <Wire.h>
@@ -74,7 +76,6 @@ void updateClock(int hour, int minute) {
     currentMinutePos = targetMinutePos;
 }
 
-#ifdef TESTING
 void runTests() {
     Serial.println("Running clock functionality tests...");
 

@@ -4,20 +4,20 @@
 // ISR for user buttons
 void toggleUserLED_A1() { 
   if (triggeredUserButton == None){
-    triggeredUserButton = User1; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+    triggeredUserButton = User1; digitalWrite(userLED, HIGH);
   }
 }
 void toggleUserLED_A2() { 
   if (triggeredUserButton == None){
-    triggeredUserButton = User2; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+    triggeredUserButton = User2; digitalWrite(userLED, HIGH);
   }
 }
 void toggleUserLED_A3() {
   if (triggeredUserButton == None){
-    triggeredUserButton = User3; userLEDState = HIGH; digitalWrite(userLED, userLEDState);
+    triggeredUserButton = User3; digitalWrite(userLED, HIGH);
   }
 }
-// void toggleUserLED_A4() { triggeredUserButton = A4; userLEDState = HIGH; digitalWrite(userLED, userLEDState); }
+// void toggleUserLED_A4() { triggeredUserButton = A4; digitalWrite(userLED, HIGH); }
 
 void toggleActionLED() {
   if (triggeredUserButton != None) {
@@ -31,8 +31,7 @@ void toggleActionLED() {
     }
 
     // Toggle the action LED state
-    actionLEDState = HIGH;          
-    digitalWrite(actionLED, actionLEDState); 
+    digitalWrite(actionLED, HIGH); 
   }
 }
 

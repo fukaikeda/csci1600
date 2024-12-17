@@ -1,4 +1,4 @@
-#ifdef TESTING
+#ifdef RUN_TESTS
 
 #include <Arduino.h>
 #include <map>

@@ -1,4 +1,4 @@
-#ifdef TESTING
+#ifdef RUN_TESTS
 
 #include "WiFiS3.h"
 #include <map>

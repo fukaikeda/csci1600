@@ -1,11 +1,9 @@
-#define MOCK
-#define RUN_TESTS
+// #define MOCK
+// #define RUN_TESTS
 
 #include "fsm.h"
 #include "MyWDT.h"
 
-volatile bool userLEDState = LOW;
-volatile bool actionLEDState = LOW;
 
 #ifdef MOCK
 #include "mock.h"
