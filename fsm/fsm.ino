@@ -113,7 +113,6 @@ State updateFSM(State curState, long mils) {
       resetSelection();
       savedClock = mils;
       petWatchdog(); // Reset WDT after successful action
-      savedClock = mils;
       nextState = sDisplayRealTime;
     }
     break;
@@ -124,7 +123,7 @@ State updateFSM(State curState, long mils) {
         indicateError();
         Serial.println("error occured while sending a message");
       }
-
+      // Transition 3-0
       petWatchdog(); // Reset WDT after successful action
       clockController.displayRealTime = true; 
       resetSelection();
