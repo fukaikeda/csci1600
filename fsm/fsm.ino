@@ -1,5 +1,5 @@
-// #define MOCK
-// #define RUN_TESTS
+#define MOCK
+#define RUN_TESTS
 
 #include "fsm.h"
 #include "MyWDT.h"
