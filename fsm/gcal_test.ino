@@ -23,6 +23,14 @@ std::map<String, String> homeTimes = {
     {"Kana", ""}
 };
 
+/*
+ * Sets up the test environment.
+ * 
+ * Initializes serial communication, runs GCal tests for various scenarios,
+ * including Wi-Fi connectivity, redirect handling, and data parsing.
+ * Inputs: None
+ * Outputs; None
+ */
 void setup() {
     Serial.begin(9600);
     while (!Serial) {}
@@ -62,6 +70,12 @@ void setup() {
     Serial.println("\nGCal Tests Completed.");
 }
 
+/*
+ * Main loop for periodic testing.
+ * Periodically fetches data every 20 seconds and prints the updated home times.
+ * Inputs: None
+ * Outputs; None
+ */
 void loop() {
     // Test Fetch Data Periodically
     delay(20000); // Wait for 20 seconds
@@ -70,7 +84,14 @@ void loop() {
     printHomeTimes();
 }
 
-// Function to Connect to Wi-Fi
+/*
+ * Connects to the specified Wi-Fi network.
+ * Attempts to connect to the Wi-Fi network using the provided credentials. Prints
+ * connection status and IP address upon successful connection.
+ * Inputs: None
+ * Outputs; None
+ * Side effect: Changes wifi oebect state
+ */
 void connectWifi() {
     Serial.print("Connecting to Wi-Fi: ");
     Serial.println(ssid);
@@ -86,7 +107,13 @@ void connectWifi() {
     Serial.println(WiFi.localIP());
 }
 
-// Helper Function to Print Home Times
+/*
+ * Prints the stored return times for users.
+ * Iterates over the global homeTimes map and prints each user's name and
+ * their corresponding return time.
+ * Inputs: None
+ * Outputs; None
+ */
 void printHomeTimes() {
     Serial.println("\nHome Times:");
     for (const auto& entry : homeTimes) {

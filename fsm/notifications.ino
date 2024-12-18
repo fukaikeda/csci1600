@@ -1,8 +1,13 @@
 #include "notifications.h"
 
 /*
-* Initailize a notification struct
-*/
+ * Initializes a notification struct with default values.
+ * 
+ * Sets up default Wi-Fi credentials, phone number, API key, and a list of predefined encouraging messages.
+ * 
+ * Inputs: None
+ * Outputs: None
+ */
 void Notifications::initNotifications() {
   ssid = "Miaaa";
   password = "12345678Mia";
@@ -15,10 +20,16 @@ void Notifications::initNotifications() {
   messages[3] = "Hey %s, you can do this!";
   messages[4] = "Don't give up, %s! The best is yet to come!";
 }
-/* 
-*   Called before sending notifications, connects to wifi for
-*   notifications to work. Takes in wifi ssid and password as strings.
-*/
+
+/*
+ * Sets up Wi-Fi for message sending.
+ * Called before sending notifications, connects to wifi for
+ * notifications to work. Takes in wifi ssid and password as strings.
+ * 
+ * Inputs: None 
+ * Outputs: None
+ * Side effects: Blocks execution until a successful Wi-Fi connection is established and prints connection status to the Serial Monitor.
+ */
 void Notifications::setupWiFi() {
     Serial.print("Attempting to connect to WPA SSID: ");
     Serial.println(ssid);
@@ -34,10 +45,21 @@ void Notifications::setupWiFi() {
     Serial.println(WiFi.localIP());
 }
 
-/* 
-*   Sends a message input to the specified phone number using apiKey.
-*   WiFi must be intialized, sends to non https endpoint
-*/
+/*
+ * Sends a message input to the specified phone number using apiKey.
+ * WiFi must be intialized, sends to non https endpoint
+ * Establishes a connection to the API server, formats a URL with the phone number, API key, and message,
+ * then sends a POST request.
+ * 
+ * Inputs:
+ * phoneNumber The recipient's phone number for the message.
+ * apiKey The API key for authenticating with the notification server.
+ * message The message content to be sent.
+ * Outputs:
+ * int Returns 0 on success, or -1 if the connection or request fails.
+ * 
+ * Side effects: Connects to a server over Wi-Fi, sends data over the network, and prints the server response to the Serial Monitor.
+ */
 int Notifications::sendNotification(const char* phoneNumber, const char* apiKey, const char* message) {
     const char* server = "api.callmebot.com";
     int port = 80;
@@ -68,11 +90,18 @@ int Notifications::sendNotification(const char* phoneNumber, const char* apiKey,
     return 0;
 }
 
-/* 
-*   Chooses a random message from messages array, makes the message
-*   personal to the name passed in and calls sendNotification to
-*   send the message via WhatsApp api
-*/
+/*
+ * Sends a personalized encouraging message via WhatsApp API.
+ * 
+ * Selects a random message from the predefined `messages` array, formats it with the recipient's name,
+ * and sends it using `sendNotification`.
+ * 
+ * Inputs:
+ * name The recipient's name to personalize the message.
+ * Output: int Returns 0 on success, or -1 if the message fails to send.
+ * 
+ * Side effects: Sends a message via the network and updates the `message_finished` flag to indicate success or failure.
+ */
 int Notifications::sendEncouragingMessage(const char* name) {
   if (name == nullptr or name == "") return -1;
     int numMessages = sizeof(messages) / sizeof(messages[0]);

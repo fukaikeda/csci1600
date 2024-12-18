@@ -10,6 +10,11 @@
 Stepper hourStepper = Stepper(STEPS_PER_REVOLUTION, 4, 6, 5,7);
 Stepper minuteStepper = Stepper(STEPS_PER_REVOLUTION, 8, 10, 9,11);
 
+/*
+ * ClockController structure to manage clock functionality.
+ * Provides methods for initializing the clock, handling real-time and input
+ * modes, and updating stepper motor positions to reflect the desired time.
+ */
 struct ClockController {
     void begin();
     void updateClock(int hour, int minute);

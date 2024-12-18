@@ -24,6 +24,14 @@ ClockController clockController;
 #endif
 
 #ifndef RUN_TESTS
+/*
+ * Initializes system components.
+ * Sets up serial communication, button inputs, notifications, WiFi, Google Calendar,
+ * clock controller, and watchdog timer.
+ * Inputs: None
+ * Outputs: None
+ * Side effects: Initializes all major components for system operation.
+ */
 void setup() {
   Serial.begin(9600);
   while (!Serial); // Wait for Serial to initialize
@@ -43,6 +51,14 @@ void setup() {
 
 }
 
+/*
+ * Main loop for FSM operation.
+ * Continuously monitors the system state and updates the FSM. Handles real-time
+ * clock display and state transitions based on inputs.
+ * Inputs: None
+ * Outputs: None
+ * Side effects: Updates LEDs, manages FSM transitions, and keeps the watchdog alive.
+ */
 void loop() {
   petWatchdog(); 
   static State CURRENT_STATE = sDisplayRealTime;
@@ -59,6 +75,17 @@ void loop() {
 
 #endif
 
+/*
+ * Updates the FSM based on the current state and input.
+ * Transitions between FSM states based on user and action inputs. Manages timers,
+ * LED indicators, notifications, and clock operations.
+ * Inputs:
+ * curState The current FSM state.
+ * mils The current time in milliseconds
+ * Outputs:
+ * State The next FSM state.
+ * Side effects: Controls LEDs, sends notifications, fetches data, and updates the clock.
+ */
 State updateFSM(State curState, long mils) {
   State nextState;
   switch(curState) {

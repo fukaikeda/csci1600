@@ -7,6 +7,12 @@
 #include <ArduinoHttpClient.h>
 #include <UrlEncode.h>
 
+/*
+ * Notifications structure for managing message sending and Wi-Fi setup.
+ * 
+ * Provides methods to initialize notifications, connect to Wi-Fi, and send messages
+ * such as basic notifications and encouraging messages.
+ */
 struct Notifications {
   const char* ssid;
   const char* password;

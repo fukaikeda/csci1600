@@ -1,7 +1,13 @@
 #include "ClockController.h"
 
-// Method for intializing clock 
-
+/* 
+ * Initializes the clock controller and calibrates initial time.
+ * Initializes internal variables, sets up the RTC, and prompts the user for initial
+ * clock calibration time via the terminal.
+ * Input: None
+ * Output: None
+ * Toggles motor hardware to calibrate
+ */
 void ClockController::initClock() {
   
     // Serial.begin(9600);
@@ -41,8 +47,14 @@ void ClockController::initClock() {
     
 }
 
-// Method for intializing RTC (real-time clock module) 
-
+/*
+ * Initializes the RTC module.
+ * Ensures the RTC is connected and operational. If the RTC lost power, it resets the time
+ * to the current compile-time.
+ * Inputs: None
+ * Outputs: None
+ * Side effects: RTC time may be adjusted if power loss is detected.
+ */
 void ClockController::initializeRTC() {
     petWatchdog(); 
     // Error handling for RTC not found
@@ -59,8 +71,14 @@ void ClockController::initializeRTC() {
     petWatchdog(); 
 }
 
-// Method for handling real time on the clock 
-
+/*
+ * Handles real-time clock mode.
+ * Reads the current time from the RTC and updates the clock hands accordingly. If the
+ * display mode is not real-time and a timeout occurs, it switches back to real-time mode.
+ * Inputs: None
+ * Outputs: None
+ * Side effects: Updates stepper motors to reflect the current time.
+ */
 void ClockController::handleRealTimeMode() {
     // Serial.println("not FSM, displayRealTime: ");
     // Serial.println(displayRealTime);
@@ -92,8 +110,16 @@ void ClockController::handleRealTimeMode() {
     delay(50);
 }
 
-// Method for handling time input 
-
+/*
+ * @Handles manual time input and updates the clock.
+ * Parses user input for time in "HHMM" format, validates it, and moves the clock hands
+ * to the specified time. It also sets a timeout to revert to real-time mode.
+ * InputsL
+ * time: Input time string
+ * Outputs: int 
+ * Returns 0 on success, -1 on invalid input
+ * Side effects: Updates stepper motor positions based on user input.
+ */
 int ClockController::handleInputMode(String time) {
     petWatchdog();
     // Checks length of input 
@@ -135,14 +161,23 @@ int ClockController::handleInputMode(String time) {
 }
 
 
-// If clock is in real time mode, it should display the real time
-
+/**
+ * Checks if the clock is in real-time mode.
+ * Inputs: None
+ * Outputs: true if in real-time mode, false otherwise.
+ */
 bool ClockController::isRealTimeMode() const {
     return displayRealTime;
 }
 
-// Function for changing software comamnds to motor movements
-
+/*
+ * Updates the stepper motors to reflect the specified time.
+ * Inputs:
+ * hour: Target hour to display
+ * minute: Target minute to display
+ * Outputs: None
+ * Side effects: Moves the hour and minute stepper motors to the correct position.
+ */
 void ClockController::updateClock(int hour, int minute) {
     petWatchdog();
     const int stepsPerRevolution = 2038;
@@ -189,14 +224,22 @@ void ClockController::updateClock(int hour, int minute) {
 }
 
 
-// Helper function for calculating hour steps
-
+/**
+ * Calculates the stepper position for a given hour.
+ * Inputs: 
+ * hour: the hour to calculate steps for
+ * Ourputs: int Step position for the hour hand
+ */
 int ClockController::calculateHourSteps(int hour) const {
     return map((12 - (hour % 12)), 0, 12, 0, STEPS_PER_REVOLUTION);
 }
 
-// Helper function for calculating minute steps
-
+/*
+ * Calculates the stepper position for a given minute.
+ * Inputs:
+ * minute: The minute to calculate steps for (0-59)
+ * Outputs: int Step position for the minute hand
+ */
 int ClockController::calculateMinuteSteps(int minute) const {
     return map(minute, 0, 60, 0, STEPS_PER_REVOLUTION);
 }

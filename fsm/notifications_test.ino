@@ -5,6 +5,17 @@
 const char* ssid = "iPhone";
 const char* password = "testPass";
 const char* phoneNumber = "+10000000000"; // add phone number
+
+/*
+ * Sets up the test environment for the Notifications system.
+ * 
+ * This function initializes the notifications system, runs tests for different scenarios,
+ * and validates behavior such as error handling, message content, and connectivity.
+ * 
+ * Inputs: None
+ * Outputs: None
+ * Side effects: Sends messages to the configured phone number for testing purposes.
+ */
 void setup() {
     Serial.begin(9600);
     while (!Serial) {}

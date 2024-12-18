@@ -4,6 +4,11 @@
 #include "fsm.h"
 #include "mock.h"
 
+/*
+ * Structure to represent the FSM state variables.
+ * Tracks the current state, saved clock time, and user-triggered inputs
+ * (user button and action button).
+ */
 typedef struct {
   State curState;
   long savedClock;
@@ -11,6 +16,11 @@ typedef struct {
   Action triggeredActionButton;
 } FSM_StateVars;
 
+/*
+ * Structure to represent FSM input variables.
+ * Contains simulated inputs like the system time (millis), user button presses,
+ * and action button presses.
+ */
 typedef struct {
   long millis;
   User userButton;
@@ -21,6 +31,12 @@ bool testFSMTransition(FSM_StateVars startStateVars, FSM_StateVars expectedState
 const char* stateToString(State s);
 void runAllTests();
 
+/**
+ * Converts an FSM state to a human-readable string.
+ * 
+ * Inputs: s The FSM state to convert.
+ * Outputs: const char* Returns a string representation of the FSM state.
+ */
 const char* stateToString(State s) {
   switch (s) {
     case sDisplayRealTime: return "sDisplayRealTime";
@@ -32,6 +48,12 @@ const char* stateToString(State s) {
 }
 
 #ifdef RUN_TESTS
+/*
+ * Runs all defined FSM test cases.
+ * 
+ * Executes a series of predefined FSM state transition tests, verifying correct
+ * behavior under various input scenarios.
+ */
 void setup() {
   Serial.begin(9600);
   while (!Serial);
@@ -45,6 +67,20 @@ void loop() {
 
 #endif
 
+/*
+ * Tests a single FSM transition and verifies the output.
+ * 
+ * Applies the provided inputs to the FSM starting from the given state variables,
+ * executes the FSM update, and validates the output against the expected state.
+ * 
+ * Inputs:
+ * startStateVars Initial FSM state variables.
+ * expectedStateVars Expected FSM state variables after the transition.
+ * inputs Simulated input variables.
+ * verbose Enables detailed serial output for debugging.
+ * Outputs:
+ * bool Returns true if the test passes, false otherwise.
+ */
 bool testFSMTransition(FSM_StateVars startStateVars, FSM_StateVars expectedStateVars, FSM_Inputs inputs, bool verbose) {
   // Set initial state variables
   State curState = startStateVars.curState;
@@ -84,6 +120,14 @@ bool testFSMTransition(FSM_StateVars startStateVars, FSM_StateVars expectedState
   return passed;
 }
 
+/*
+ * Runs all FSM tests and validates expected behavior.
+ * 
+ * Defines multiple FSM test cases with initial and expected states, applies
+ * inputs, and verifies correct state transitions.
+ * Inputs: None
+ * Outputs: None
+ */
 void runAllTests() {
   // Define test cases
   FSM_StateVars startStates[] = {
